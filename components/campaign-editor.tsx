@@ -275,8 +275,8 @@ export default function CampaignEditor(
                 ))}
               </select>
             </div>
-            <div>
-              <h2 className="text-xl">Campaign Tiers</h2>
+            <div className="mt-8">
+              <h2 className="text-xl mb-2">Campaign Tiers</h2>
               {
                 campaignTiers.map((tier, index) => (
                   editingTierIndex === index ? (
@@ -290,8 +290,7 @@ export default function CampaignEditor(
                     />
                   ) : (
                     <div key={index}>
-                      <CampaignTierCard tier={tier} />
-                      <Button onClick={() => startEditTier(index)}>Edit</Button>
+                      <CampaignTierCard tier={tier} onClickEdit={() => startEditTier(index)} />
                     </div>
                   )
                 ))

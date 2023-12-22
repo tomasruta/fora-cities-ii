@@ -1,12 +1,14 @@
 import React from 'react';
 import { CampaignTier } from "@prisma/client";
+import { Button } from "@/components/ui/button";
 
-export default function CampaignTierCard({ tier }:
-  { tier: CampaignTier })
+
+export default function CampaignTierCard({ tier, onClickEdit }:
+  { tier: CampaignTier, onClickEdit: () => void })
 {
   return (
-    <div>
-      <div className="space-y-4 my-4 rounded-md border border-gray-500 p-4">
+    <div className="space-y-4 my-4 rounded-md border border-gray-500 p-4">
+      <div>
         <h1 className="text-2xl font-bold">{tier.name}</h1>
         {tier.description && 
           <div className="mb-6 flex flex-col space-y-4">
@@ -24,6 +26,7 @@ export default function CampaignTierCard({ tier }:
           </div>
         }
       </div>
+      <Button onClick={onClickEdit}>Edit</Button>
     </div>
   );
 }
