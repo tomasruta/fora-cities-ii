@@ -65,7 +65,7 @@ export default function CampaignTierEditor({ tier, onSave }: CampaignTierEditorP
           type="number"
           id="price"
           value={editedTier.price ?? ''}
-          placeholder="Price (ETH)"
+          placeholder="Price"
           onChange={(e) => handleFieldChange('price', e.target.valueAsNumber)}
         />
       </div>
