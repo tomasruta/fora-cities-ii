@@ -265,7 +265,7 @@ export default function CampaignEditor(
                 value={editedCampaign.formId || ""}
                 onChange={(e) => handleFieldChange('formId', e.target.value)}
                 disabled={isPublic}
-                className="text-black"
+                className="text-black mt-2"
               >
                 <option value="">Select a Form</option>
                 {forms.map((form) => (

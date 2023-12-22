@@ -149,9 +149,15 @@ export default function CampaignDashboard(
               })}`
               : "Not launched yet"}
             </div>
-          </div>
-          <div>
-            {campaign?.form?.name}
+            <div className="mt-4">
+              {!campaign.deployed &&
+                <LaunchCampaignButton
+                  campaign={campaign}
+                  subdomain={subdomain}
+                  onComplete={triggerRefresh}
+                />
+              }
+            </div>
           </div>
           {campaign.campaignTiers &&
             <div className="mt-12">
@@ -164,15 +170,6 @@ export default function CampaignDashboard(
               )}
             </div>
           }
-          <div className="mt-4">
-            {!campaign.deployed &&
-              <LaunchCampaignButton
-                campaign={campaign}
-                subdomain={subdomain}
-                onComplete={triggerRefresh}
-              />
-            }
-          </div>
           {formQuestions && formResponses &&
             <div className="mt-12">
               <h2 className="text-xl">Applications</h2>
