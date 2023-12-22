@@ -76,7 +76,7 @@ export default function useEthereum() {
         deployed: true,
       };
 
-      toast.success(`Campaign deployed at ${deployedAddress}`);
+      toast.success(`Campaign launched!`);
 
       await launchCampaign(data, { params: { subdomain: params.subdomain } }, null);
     } catch (error: any) {
