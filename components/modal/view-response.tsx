@@ -58,12 +58,12 @@ const ResponseModal: React.FC<ResponseModalProps> = (
                 onClose();
               }}
             >
-              Decline
+              DECLINE
             </Button>
             <Button
               onClick={onClose}
             >
-              Skip
+              SKIP
             </Button>
             <Button
               onClick={() => {
@@ -71,7 +71,7 @@ const ResponseModal: React.FC<ResponseModalProps> = (
                 onClose();
               }}
             >
-              Approve
+              APPROVE
             </Button>
           </div>
         </div>
