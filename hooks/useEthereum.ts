@@ -100,7 +100,7 @@ export default function useEthereum() {
       // Wait for the transaction to be mined
       await transactionResponse.wait();
 
-      toast.success(`Contributed ${amount} ETH`);
+      toast.success(`Contribution successful. Thanks!`);
     } catch (error: any) {
       console.error(error);
       toast.error(error.message);
