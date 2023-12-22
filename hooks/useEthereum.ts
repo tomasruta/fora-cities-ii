@@ -127,10 +127,10 @@ export default function useEthereum() {
   };
 
   const getContributionTotal = async (contractAddr: string) => {
-    await connectToWallet();
+    const currentSigner = signer || await connectToWallet();
 
     const campaignABI = CampaignContract.abi;
-    const campaignInstance = new ethers.Contract(contractAddr, campaignABI, signer);
+    const campaignInstance = new ethers.Contract(contractAddr, campaignABI, currentSigner);
     const total = await campaignInstance.totalContributions();
     return total;
   }

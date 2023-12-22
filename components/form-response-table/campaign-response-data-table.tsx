@@ -36,30 +36,39 @@ export default function CampaignResponseDataTable({
         formResponses.map(async (formResponse) => {
           const campaignApplication = await getUserCampaignApplication(
             campaign.id, formResponse.user.id);
-          return {
-            ...formResponse,
-            status: campaignApplication!.status,
-            applicationId: campaignApplication!.id,
-          };
+          if (campaignApplication) {
+            return {
+              ...formResponse,
+              status: campaignApplication!.status,
+              applicationId: campaignApplication!.id,
+            };
+          } else {
+            return null;
+          }
         })
       );
 
       const formattedData = updatedFormResponses.map((formResponse) => {
-        const row: { [key: string]: any } = {
-          id: formResponse.id,
-          user: formResponse.user.name,
-          status: formResponse.status,
-          applicationId: formResponse.applicationId,
-        };
+        if (formResponse) {
+          const row: { [key: string]: any } = {
+            id: formResponse.id,
+            user: formResponse.user.name,
+            status: formResponse.status,
+            applicationId: formResponse.applicationId,
+          };
 
-        formResponse.answers.forEach((answer: Answer) => {
-          row[answer.questionId] = answer;
-        });
+          formResponse.answers.forEach((answer: Answer) => {
+            row[answer.questionId] = answer;
+          });
 
-        return row as Row<any>;
+          return row as Row<any>;
+        } else {
+          return null;
+        }
       });
 
-      setData(formattedData);
+      const nonNullFormattedData = formattedData.filter(row => row !== null) as Row<any>[];
+      setData(nonNullFormattedData);      
     }
 
     fetchCampaignApplications();
