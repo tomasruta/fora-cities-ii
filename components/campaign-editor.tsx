@@ -40,6 +40,7 @@ interface Payload {
   formId?: string | null;
 }
 
+
 export default function CampaignEditor(
   {campaignId, subdomain, isPublic}:
   {campaignId: string, subdomain: string, isPublic: boolean}
@@ -49,7 +50,7 @@ export default function CampaignEditor(
   const [contractBalance, setContractBalance] = useState(BigInt(0));
   const [forms, setForms] = useState<Form[]>([]);
   const [campaign, setCampaign] = useState<Campaign | undefined>(undefined);
-  const [campaignTiers, setCampaignTiers] = useState<CampaignTier[]>([]);
+  const [campaignTiers, setCampaignTiers] = useState<Partial<CampaignTier>[]>([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editedCampaign, setEditedCampaign] = useState<EditedFields>(
@@ -103,9 +104,10 @@ export default function CampaignEditor(
   }, [campaign]);
 
   const addNewTier = () => {
-    // @ts-expect-error
+    const newNumTiers = campaignTiers.length + 1;
     setCampaignTiers([...campaignTiers, { name: '', description: '',
       quantity: null, price: 0 }]);
+    startEditTier(newNumTiers - 1);
   };
 
   const updateTier = (index: number, updatedTier: EditedFields) => {
@@ -181,26 +183,18 @@ export default function CampaignEditor(
       ) : !campaign || !campaign.organizationId ? (
         <div>Campaign not found</div>
       ) : (
-        <div>
+        <div className="max-w-[500px]">
           <div>
             <h1 className="text-2xl">
               Campaign Settings
             </h1>
             <div className="space-y-4 my-4">
-              <Input 
+              <Input
                 type="text" 
                 id="campaignName"
                 value={editedCampaign.name}
                 placeholder="Campaign name"
                 onChange={(e) => handleFieldChange('name', e.target.value)} 
-                disabled={isPublic || campaign.deployed}
-              />
-              <Input 
-                type="text" 
-                value={editedCampaign.thresholdETH}
-                id="thresholdETH"
-                placeholder="Fundraising goal"
-                onChange={(e) => handleFieldChange('thresholdETH', e.target.value)} 
                 disabled={isPublic || campaign.deployed}
               />
               <Textarea 
@@ -209,27 +203,29 @@ export default function CampaignEditor(
                 onChange={(e) => handleFieldChange('content', e.target.value)} 
                 disabled={isPublic}
               />
-              <div className="flex space-x-4">
-                  <div>Require approval for contributors?</div>
-                  <Switch 
-                    id="requireApproval"
-                    checked={editedCampaign.requireApproval}
-                    onCheckedChange={(val) => handleFieldChange('requireApproval', val)}
-                  />
-              </div>
-              <div className="flex space-x-4 items-center">
-                <div>
-                  Deadline
-                </div>
-                <DatePicker
-                  id="deadline"
-                  date={editedCampaign.deadline}
-                  onSelect={(date) => {
-                    if (date) {
-                      handleFieldChange('deadline', date);
-                    }
-                  }}
+              <div className="flex space-x-8 items-center">
+                <Input 
+                  type="text" 
+                  value={editedCampaign.thresholdETH}
+                  id="thresholdETH"
+                  placeholder="Fundraising goal"
+                  onChange={(e) => handleFieldChange('thresholdETH', e.target.value)} 
+                  disabled={isPublic || campaign.deployed}
                 />
+                <div className="flex space-x-4 items-center">
+                  <div>
+                    Deadline
+                  </div>
+                  <DatePicker
+                    id="deadline"
+                    date={editedCampaign.deadline}
+                    onSelect={(date) => {
+                      if (date) {
+                        handleFieldChange('deadline', date);
+                      }
+                    }}
+                  />
+                </div>
               </div>
               <div className="flex space-x-4 items-center">
                 <div>Currency</div>
@@ -259,21 +255,31 @@ export default function CampaignEditor(
                 </ToggleGroup.Root>
               </div>
             </div>
-            <div className="my-4">
-              <h2 className="text-xl">Application Form</h2>
-              <select
-                value={editedCampaign.formId || ""}
-                onChange={(e) => handleFieldChange('formId', e.target.value)}
-                disabled={isPublic}
-                className="text-black mt-2"
-              >
-                <option value="">Select a Form</option>
-                {forms.map((form) => (
-                  <option key={form.id} value={form.id}>
-                    {form.name}
-                  </option>
-                ))}
-              </select>
+            <div className="my-16">
+              <div className="flex space-x-4">
+                  <div>Require approval for contributors?</div>
+                  <Switch
+                    id="requireApproval"
+                    checked={editedCampaign.requireApproval}
+                    onCheckedChange={(val) => handleFieldChange('requireApproval', val)}
+                  />
+              </div>
+              <div className="my-4">
+                <h2 className="text-xl">Application Form</h2>
+                <select
+                  value={editedCampaign.formId || ""}
+                  onChange={(e) => handleFieldChange('formId', e.target.value)}
+                  disabled={isPublic}
+                  className="text-black mt-2"
+                >
+                  <option value="">Select a Form</option>
+                  {forms.map((form) => (
+                    <option key={form.id} value={form.id}>
+                      {form.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div className="mt-8">
               <h2 className="text-xl mb-2">Campaign Tiers</h2>
