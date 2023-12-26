@@ -78,7 +78,7 @@ export function calcAccommodationUnitCapacity(rooms: RoomWithBedsType[]) {
 }
 
 
-function replaceNullWithUndefined(obj: Record<any, any>) {
+export function replaceNullWithUndefined(obj: Record<any, any>) {
   return _.transform(obj, function(result: any, value, key) {
     if (_.isObject(value)) {
       result[key] = replaceNullWithUndefined(value);
@@ -88,7 +88,7 @@ function replaceNullWithUndefined(obj: Record<any, any>) {
   });
 }
 
-function replaceUndefinedWithNull(obj: Record<any, any>) {
+export function replaceUndefinedWithNull(obj: Record<any, any>) {
   return _.transform(obj, function(result: any, value, key) {
     if (_.isObject(value)) {
       result[key] = replaceUndefinedWithNull(value);
