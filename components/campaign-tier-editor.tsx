@@ -17,11 +17,14 @@ export default function CampaignTierEditor({ tier, onSave }: CampaignTierEditorP
 
   useEffect(() => {
     if (tier) {
+      if (tier.price === null) {
+        tier.price = 0;
+      }
       setEditedTier({
         name: tier.name,
         description: tier.description ?? undefined,
         quantity: tier.quantity ?? undefined,
-        price: tier.price ?? undefined,
+        price: tier.price > 0 ? tier.price : undefined,
       });
     }
   }, [tier]);

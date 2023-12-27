@@ -222,14 +222,17 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
             <div className="space-y-4 mt-8">
               <h2 className="text-2xl font-bold">Goal</h2>
               <div className="flex space-x-8 items-center">
-                <Input 
-                  type="text" 
-                  value={editedCampaign.thresholdUSD}
-                  id="thresholdUSD"
-                  placeholder="Fundraising goal"
-                  onChange={(e) => handleFieldChange('thresholdUSD', e.target.value)} 
-                  disabled={isPublic || campaign.deployed}
-                />
+                <div className="flex items-center">
+                  <p className="mr-2">$</p>
+                  <Input
+                    type="text"
+                    value={editedCampaign.thresholdUSD}
+                    id="thresholdUSD"
+                    placeholder="Fundraising goal"
+                    onChange={(e) => handleFieldChange('thresholdUSD', e.target.value)}
+                    disabled={isPublic || campaign.deployed}
+                  />
+                </div>
                 <div className="flex space-x-4 items-center">
                   <div>
                     Deadline
@@ -246,7 +249,7 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
                 </div>
               </div>
               <div className="flex space-x-4 items-center">
-                <div>Currency</div>
+                <div>Currency to accept</div>
                 <ToggleGroup.Root
                   className="inline-flex bg-gray-200 rounded-full shadow-md"
                   type="single"
