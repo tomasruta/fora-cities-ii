@@ -15,6 +15,7 @@ import { Progress } from "@/components/ui/progress"
 import { useRouter } from "next/navigation";
 import CampaignResponseDataTable from "@/components/form-response-table/campaign-response-data-table";
 import prisma from "@/lib/prisma";
+import { ETH_PRICE_IN_DOLLARS } from "@/lib/utils";
 
 
 export default function CampaignDashboard(
@@ -33,7 +34,9 @@ export default function CampaignDashboard(
 
   const router = useRouter();
 
-  const numBackers = 12;  // TEMP
+  // const numBackers = 6;  // TEMP
+  const numBackers = 0;  // TEMP
+
 
   const triggerRefresh = () => {
     setRefreshFlag(prev => !prev);
@@ -117,13 +120,20 @@ export default function CampaignDashboard(
               </div>
               <div className="flex space-x-8">
                 <p className="text-sm">
-                  {`${ethers.formatEther(totalContributions)} of ${ethers.formatEther(campaign.thresholdWei)} ETH funded`}
+                  {`${Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+                    .format(parseFloat(ethers.formatEther(totalContributions)) 
+                    * ETH_PRICE_IN_DOLLARS)} of 
+                  ${Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+                    .format(parseFloat(ethers.formatEther(campaign.thresholdWei)) 
+                    * ETH_PRICE_IN_DOLLARS)} funded`}
                 </p>
                 <p className="text-sm">
                   {`${numBackers} backers`}
                 </p>
                 <p className="text-sm">
-                  {`${ethers.formatEther(contractBalance)} ETH available`}
+                  {`${Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+                      .format(parseFloat(ethers.formatEther(contractBalance)) 
+                      * ETH_PRICE_IN_DOLLARS)} available`}
                 </p>
               </div>
             </div>

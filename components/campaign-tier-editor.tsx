@@ -51,14 +51,14 @@ export default function CampaignTierEditor({ tier, onSave }: CampaignTierEditorP
           id="quantity"
           value={editedTier.quantity ?? ''}
           placeholder="Number of spots in this tier (optional)"
-          onChange={(e) => handleFieldChange('quantity', e.target.valueAsNumber)}
+          onChange={(e) => handleFieldChange('quantity', e.target.value)}
         />
         <Input 
           type="number"
           id="price"
           value={editedTier.price ?? ''}
           placeholder="Price"
-          onChange={(e) => handleFieldChange('price', e.target.valueAsNumber)}
+          onChange={(e) => handleFieldChange('price', e.target.value)}
         />
       </div>
       <div className="flex justify-end">
