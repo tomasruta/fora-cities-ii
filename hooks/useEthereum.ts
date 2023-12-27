@@ -87,14 +87,15 @@ export default function useEthereum() {
 
   const contribute = async (amount: string, campaign: Campaign): Promise<void> => {
     try {
-      await connectToWallet();
+      // await connectToWallet();
+      const currentSigner = signer || await connectToWallet();
 
       if (!campaign.deployed) {
         throw new Error("Campaign isn't deployed yet");
       }
 
       const campaignABI = CampaignContract.abi;
-      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, signer);
+      const campaignInstance = new ethers.Contract(campaign.deployedAddress!, campaignABI, currentSigner);
       const transactionResponse = await campaignInstance.contribute({ value: ethers.parseEther(amount) });
       toast('Sending contribution...')
       // Wait for the transaction to be mined
