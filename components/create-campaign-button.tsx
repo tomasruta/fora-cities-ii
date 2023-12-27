@@ -24,7 +24,6 @@ export default function CreateCampaignButton() {
             null,
           );
           router.push(`/city/${subdomain}/campaigns/${campaign.id}/settings`);
-          router.refresh();
         })
       }
       loading={isPending}
