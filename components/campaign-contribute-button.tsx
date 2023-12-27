@@ -41,12 +41,14 @@ export default function CampaignContributeButton({
     }
   };
 
+
   return (
     <div className={`flex flex-col ${className}`}>
       <div>
         <div className="text-2xl">
           {`${Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
-                .format(parseFloat(ethers.formatEther(campaign.thresholdWei)))}
+                .format(parseFloat(ethers.formatEther(campaign.thresholdWei))
+                * ETH_PRICE_IN_DOLLARS)}
           `}
         </div>
         <div>

@@ -22,7 +22,9 @@ export default function CampaignTierCard({ tier, onClickEdit }:
         }
         {tier.price && 
           <div className="flex space-x-4 items-center">
-            {`${tier.price} ETH`}
+            {`${Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+                .format(tier.price)}
+            `}
           </div>
         }
       </div>
