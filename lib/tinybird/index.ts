@@ -13,8 +13,6 @@ export const getCityPageViews = async (subdomain: string) => {
 
   const hostname = `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
-  console.log("hostname: ", hostname);
-
   url.searchParams.append("hostname", hostname);
   url.searchParams.append("custom_domain", subdomain);
 
@@ -22,6 +20,7 @@ export const getCityPageViews = async (subdomain: string) => {
     headers: {
       Authorization: "Bearer " + process.env.TINYBIRD_TOKEN_CITY_PAGE_VIEWS,
     },
+    cache: 'no-store'
   })
     .then((r) => r.json())
     .then((r) => r)
