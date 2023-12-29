@@ -34,9 +34,7 @@ export default function CampaignDashboard(
 
   const router = useRouter();
 
-  // const numBackers = 6;  // TEMP
-  const numBackers = 0;  // TEMP
-
+  const numBackers = 6;  // TEMP
 
   const triggerRefresh = () => {
     setRefreshFlag(prev => !prev);

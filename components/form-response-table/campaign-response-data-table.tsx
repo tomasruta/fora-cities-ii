@@ -14,6 +14,7 @@ import { formatAnswer } from "./utils";
 import { getUserCampaignApplication } from "@/lib/actions";
 import { useEffect, useState } from 'react';
 import ResponseModal from '@/components/modal/view-response';
+import { useRouter } from "next/navigation";
 
 
 export default function CampaignResponseDataTable({
@@ -29,6 +30,8 @@ export default function CampaignResponseDataTable({
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Row<any> | null>(null);
   const [questionsData, setQuestionsData] = useState<(Question & { form: Form })[]>([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchCampaignApplications() {
@@ -116,7 +119,7 @@ export default function CampaignResponseDataTable({
       <DataTable columns={columns} data={data} />
       <ResponseModal
         isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {setModalOpen(false); router.refresh()}}
         rowData={selectedRow ? selectedRow.original : null}
         questionsData={questionsData}
       />
