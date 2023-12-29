@@ -10,11 +10,11 @@ export default function PageViewsCardKPI({ org }: { org: Organization }) {
 
   useEffect(() => {
     setInterval(() => {
-      getCityPageViews("fora").then((viewCount) => {
+      getCityPageViews(org.subdomain as string).then((viewCount) => {
         setPageViews(viewCount);
       });
-    }, 1000);
-  }, []);
+    }, 5000);
+  }, [org.subdomain]);
 
   return (
     <Card>
