@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySignatureAppRouter } from "@upstash/qstash/dist/nextjs";
 import { CreateInviteSchema } from "@/lib/schema";
-import { sendOrgInviteEmail } from "@/lib/email-templates/org-invite";
+import { sendOrgInviteEmail } from "@/lib/email/templates/org-invite";
 import prisma from "@/lib/prisma";
 
 // 1) Authenticate

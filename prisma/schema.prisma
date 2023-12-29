@@ -376,6 +376,7 @@ model Place {
 model Media {
   id       String  @id @default(cuid())
   uri      String
+  
   blurhash String?
   placeId  String? // nullable if a place can exist without a user
   place    Place?  @relation(fields: [placeId], references: [id])

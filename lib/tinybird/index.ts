@@ -1,6 +1,6 @@
 "use server";
 
-type PageViewsData = {
+export type PageViewsData = {
   hostname: string;
   path: string;
   "count()": number;

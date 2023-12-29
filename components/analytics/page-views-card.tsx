@@ -1,10 +1,21 @@
+"use client";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { getCityPageViews } from "@/lib/tinybird";
+import { PageViewsData, getCityPageViews } from "@/lib/tinybird";
 import KPICardKeyAction from "./kpi-card-key-action";
 import { Organization } from "@prisma/client";
+import { useEffect, useState } from "react";
 
-export default async function PageViewsCardKPI({ org }: { org: Organization }) {
-  const pageViews = await getCityPageViews("fora");
+export default function PageViewsCardKPI({ org }: { org: Organization }) {
+  const [pageViews, setPageViews] = useState<PageViewsData[] | undefined>();
+
+  useEffect(() => {
+    setInterval(() => {
+      getCityPageViews("fora").then((viewCount) => {
+        setPageViews(viewCount);
+      });
+    }, 1000);
+  }, []);
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

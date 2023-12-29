@@ -58,9 +58,9 @@ import { z } from "zod";
 import { geocode, reverseGeocode } from "./gis";
 import { track } from "@/lib/analytics";
 import { Resend } from "resend";
-import { renderWaitlistWelcomeEmail } from "./email-templates/waitlist-welcome";
+import { renderWaitlistWelcomeEmail } from "./email/templates/waitlist-welcome";
 import { UserAndRoles } from "@/components/data-tables/org/columns";
-import { sendOrgInviteEmail } from "./email-templates/org-invite";
+import { sendOrgInviteEmail } from "./email/templates/org-invite";
 import { getCsrfToken } from "next-auth/react";
 import {
   assertUserHasEventRole,

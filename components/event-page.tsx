@@ -41,9 +41,9 @@ import { EventHost } from "./event-list";
 
 function CalendarView({ startingAt }: { startingAt: Date }) {
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border border-gray-300">
-      <div className="bg-gray-300 text-center">
-        <span className="md:text-md px-3 text-sm font-semibold md:px-4">
+    <div className="flex flex-col overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
+      <div className="bg-gray-300 dark:bg-gray-700 text-center">
+        <span className="md:text-md px-3 text-sm font-semibold md:px-4 dark:text-gray-100">
           {format(startingAt, "MMM")}
         </span>
       </div>

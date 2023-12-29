@@ -16,6 +16,7 @@ export default function Campaigns({
         <div className="grid  grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {campaigns.map((campaign) => (
             <CampaignCard
+            {...campaign}
               key={campaign.id}
               campaign={campaign}
               name={campaign.name}
