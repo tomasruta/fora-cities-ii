@@ -19,13 +19,23 @@ export default async function PeoplePage({
       </div>
     );
   }
-  const [{ usersWithRoles, uniqueRoles }, org] = await Promise.all([
+  const [{ usersWithRoles }, org, uniqueRoles] = await Promise.all([
     getUsersWithRoleInOrganization(params.subdomain),
-    prisma?.organization.findUnique({
+    prisma.organization.findUnique({
       where: {
         subdomain: params.subdomain,
       },
     }),
+    prisma.organizationRole.findMany({
+      where: {
+        organization: {
+          subdomain: params.subdomain,
+        },
+      },
+      include: {
+        role: true,
+      }
+    }).then((orgRoles) => orgRoles.map(({ role }) => role)),
   ]);
 
   if (!org) {
@@ -33,11 +43,11 @@ export default async function PeoplePage({
   }
 
   return (
-    <div className="h-full flex-1 flex-col md:p-8 md:flex">
+    <div className="h-full flex-1 flex-col md:flex md:p-8">
       <div className="flex items-center justify-between space-y-2"></div>
       <OrgTableCard
         users={Object.values(usersWithRoles)}
-        roles={Object.values(uniqueRoles)}
+        roles={uniqueRoles}
         organization={org}
       />
     </div>

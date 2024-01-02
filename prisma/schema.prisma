@@ -157,6 +157,10 @@ model Event {
   ticketTier     TicketTier[]
   ticket         Ticket[]
   form           Form[]
+  // Recursive event nesting enables tracks, sessions, etc.
+  parentId       String?
+  parent         Event?       @relation("EventToEvent", fields: [parentId], references: [id])
+  children       Event[]      @relation("EventToEvent")
 }
 
 model OrganizationRole {
@@ -357,6 +361,8 @@ model Place {
   name              String?
   description       String?
   type              String?
+  address1          String?
+  address2          String?
   address           Json?
   googleAddress     Json?
   mapboxAddress     Json?
@@ -374,9 +380,9 @@ model Place {
 }
 
 model Media {
-  id       String  @id @default(cuid())
-  uri      String
-  
+  id  String @id @default(cuid())
+  uri String
+
   blurhash String?
   placeId  String? // nullable if a place can exist without a user
   place    Place?  @relation(fields: [placeId], references: [id])

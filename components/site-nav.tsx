@@ -29,7 +29,7 @@ export default async function SiteNav({
           <div className="flex">
             {/* <ConnectPassportButton className='h-9'>Connect Passport</ConnectPassportButton> */}
           </div>
-          <div className="absolute right-1 p-2.5">
+          <div className="absolute right-5 md:right-8 flex justify-center items-center">
             <UserNav />
           </div>
         </div>

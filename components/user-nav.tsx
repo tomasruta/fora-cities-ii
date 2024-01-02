@@ -13,21 +13,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getSession } from "@/lib/auth";
 import { getTwoLetterPlaceholder, getUsername } from "@/lib/profile";
-import { signOut } from "next-auth/react";
+// import { signOut } from "next-auth/react";
 import UserNavLogout from "./user-nav-logout";
-import Siwe from "./siwe";
+// import Siwe from "./siwe";
 import Link from "next/link";
 
 export default async function UserNav() {
   const session = await getSession();
   if (!session) {
-    return <Link href="/login">Sign in</Link>;
+    return <Link href="/login" className="p-1 md:p-5">Sign In</Link>;
   }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8 bg-gray-600">
+        <Button variant="ghost" className="relative h-8 w-8 p-0 rounded-full">
+          <Avatar className="bg-gray-600 h-8 w-8 rounded-full">
             {session?.user?.image ? (
               <AvatarImage
                 src={session?.user?.image}

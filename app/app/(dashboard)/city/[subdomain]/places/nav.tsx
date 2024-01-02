@@ -11,14 +11,9 @@ export default function HousingNav() {
   const navItems = [
     {
       name: "General",
-      href: `/city/${subdomain}/housing`,
+      href: `/city/${subdomain}/places`,
       segment: null,
     },
-    // {
-    //   name: "Map",
-    //   href: `/city/${subdomain}/housing/map`,
-    //   segment: "map",
-    // },
   ];
 
   return (

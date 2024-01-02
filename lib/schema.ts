@@ -117,9 +117,11 @@ const FeatureCollectionSchema = z.object({
 
 export const CreatePlaceSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(1, { message: "Name is required." }).optional(),
+  name: z.string().min(1, { message: "Name is required." }),
   description: z.string().optional(),
-  type: z.string().min(1, { message: "Type is required." }).optional(),
+  type: z.string().min(1, { message: "Type is required." }),
+  address1: z.string(),
+  address2: z.string().optional(),
   address: MapboxAddressSchema.array()
     .or(GoogleAddressSchema.array())
     .optional(),
