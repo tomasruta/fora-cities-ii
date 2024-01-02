@@ -18,11 +18,12 @@ import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useRouter } from "next/navigation";
 import CampaignTierEditor from "@/components/campaign-tier-editor";
 import CampaignTierCard from "@/components/campaign-tier-card";
+import { ETH_PRICE_IN_DOLLARS } from "@/lib/utils";
 
 
 interface EditedFields {
   name?: string;
-  thresholdETH?: string;
+  thresholdUSD?: string;
   content?: string;
   requireApproval?: boolean;
   deadline?: Date;
@@ -40,6 +41,7 @@ interface Payload {
   formId?: string | null;
 }
 
+
 export default function CampaignEditor(
   {campaignId, subdomain, isPublic}:
   {campaignId: string, subdomain: string, isPublic: boolean}
@@ -49,11 +51,11 @@ export default function CampaignEditor(
   const [contractBalance, setContractBalance] = useState(BigInt(0));
   const [forms, setForms] = useState<Form[]>([]);
   const [campaign, setCampaign] = useState<Campaign | undefined>(undefined);
-  const [campaignTiers, setCampaignTiers] = useState<CampaignTier[]>([]);
+  const [campaignTiers, setCampaignTiers] = useState<Partial<CampaignTier>[]>([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editedCampaign, setEditedCampaign] = useState<EditedFields>(
-    { name: undefined, thresholdETH: undefined, content: undefined,
+    { name: undefined, thresholdUSD: undefined, content: undefined,
       deadline: undefined, requireApproval: undefined,
       formId: undefined });
   const [editingTierIndex, setEditingTierIndex] = useState<number | null>(null);
@@ -94,7 +96,7 @@ export default function CampaignEditor(
     if (campaign) {
       setEditedCampaign({
         name: campaign.name,
-        thresholdETH: ethers.formatEther(campaign.thresholdWei),
+        thresholdUSD: (parseFloat(ethers.formatEther(campaign.thresholdWei)) * ETH_PRICE_IN_DOLLARS).toString(),
         content: campaign.content ?? undefined,
         deadline: campaign.deadline ?? undefined,
         requireApproval: campaign.requireApproval,
@@ -103,16 +105,31 @@ export default function CampaignEditor(
   }, [campaign]);
 
   const addNewTier = () => {
-    // @ts-expect-error
+    const newNumTiers = campaignTiers.length + 1;
     setCampaignTiers([...campaignTiers, { name: '', description: '',
       quantity: null, price: 0 }]);
+    startEditTier(newNumTiers - 1);
   };
 
-  const updateTier = (index: number, updatedTier: EditedFields) => {
+const updateTier = (index: number, updatedTier: EditedFields) => {
     const updatedTiers = [...campaignTiers];
-    updatedTiers[index] = { ...updatedTiers[index], ...updatedTier };
+    let newTier: Partial<CampaignTier> = { ...updatedTiers[index] };
+
+    Object.entries(updatedTier).forEach(([key, value]) => {
+        switch (key) {
+            case "quantity":
+            case "price":
+                newTier[key] = value === '' ? null : Number(value);
+                break;
+            default:
+                newTier[key as keyof CampaignTier] = value || null;
+        }
+    });
+
+    updatedTiers[index] = newTier;
     setCampaignTiers(updatedTiers);
-  };
+};
+
 
   const startEditTier = (index: number) => {
     setEditingTierIndex(index);
@@ -123,7 +140,6 @@ export default function CampaignEditor(
   };
 
   const handleFieldChange = (field: string, value: string | string[] | boolean | Date | ((prevState: string[]) => string[])) => {
-    console.log('handling');
     setEditedCampaign(prev => ({ ...prev, [field]: value }));
   };
 
@@ -132,7 +148,8 @@ export default function CampaignEditor(
     if (campaign) {
       let payload: Payload = { id: campaignId };
       if (editedCampaign.name) payload.name = editedCampaign.name;
-      if (editedCampaign.thresholdETH !== undefined) payload.thresholdWei = ethers.parseEther(editedCampaign.thresholdETH);
+      if (editedCampaign.thresholdUSD !== undefined) payload.thresholdWei =
+        ethers.parseEther(editedCampaign.thresholdUSD) / BigInt(ETH_PRICE_IN_DOLLARS);
       if (editedCampaign.content) payload.content = editedCampaign.content ?? null;
       if (editedCampaign.requireApproval !== undefined) payload.requireApproval = editedCampaign.requireApproval;
       if (editedCampaign.deadline) payload.deadline = editedCampaign.deadline;
@@ -181,13 +198,13 @@ export default function CampaignEditor(
       ) : !campaign || !campaign.organizationId ? (
         <div>Campaign not found</div>
       ) : (
-        <div>
+        <div className="max-w-[500px]">
           <div>
-            <h1 className="text-2xl">
+            <h1 className="text-3xl">
               Campaign Settings
             </h1>
             <div className="space-y-4 my-4">
-              <Input 
+              <Input
                 type="text" 
                 id="campaignName"
                 value={editedCampaign.name}
@@ -195,44 +212,44 @@ export default function CampaignEditor(
                 onChange={(e) => handleFieldChange('name', e.target.value)} 
                 disabled={isPublic || campaign.deployed}
               />
-              <Input 
-                type="text" 
-                value={editedCampaign.thresholdETH}
-                id="thresholdETH"
-                placeholder="Fundraising goal"
-                onChange={(e) => handleFieldChange('thresholdETH', e.target.value)} 
-                disabled={isPublic || campaign.deployed}
-              />
               <Textarea 
                 value={editedCampaign.content} 
                 id="content"
-                onChange={(e) => handleFieldChange('content', e.target.value)} 
+                onChange={(e) => handleFieldChange('content', e.target.value)}
                 disabled={isPublic}
               />
-              <div className="flex space-x-4">
-                  <div>Require approval for contributors?</div>
-                  <Switch 
-                    id="requireApproval"
-                    checked={editedCampaign.requireApproval}
-                    onCheckedChange={(val) => handleFieldChange('requireApproval', val)}
+            </div>
+            <div className="space-y-4 mt-8">
+              <h2 className="text-2xl font-bold">Goal</h2>
+              <div className="flex space-x-8 items-center">
+                <div className="flex items-center">
+                  <p className="mr-2">$</p>
+                  <Input
+                    type="text"
+                    value={editedCampaign.thresholdUSD}
+                    id="thresholdUSD"
+                    placeholder="Fundraising goal"
+                    onChange={(e) => handleFieldChange('thresholdUSD', e.target.value)}
+                    disabled={isPublic || campaign.deployed}
                   />
-              </div>
-              <div className="flex space-x-4 items-center">
-                <div>
-                  Deadline
                 </div>
-                <DatePicker
-                  id="deadline"
-                  date={editedCampaign.deadline}
-                  onSelect={(date) => {
-                    if (date) {
-                      handleFieldChange('deadline', date);
-                    }
-                  }}
-                />
+                <div className="flex space-x-4 items-center">
+                  <div>
+                    Deadline
+                  </div>
+                  <DatePicker
+                    id="deadline"
+                    date={editedCampaign.deadline}
+                    onSelect={(date) => {
+                      if (date) {
+                        handleFieldChange('deadline', date);
+                      }
+                    }}
+                  />
+                </div>
               </div>
               <div className="flex space-x-4 items-center">
-                <div>Currency</div>
+                <div>Currency to accept</div>
                 <ToggleGroup.Root
                   className="inline-flex bg-gray-200 rounded-full shadow-md"
                   type="single"
@@ -259,30 +276,41 @@ export default function CampaignEditor(
                 </ToggleGroup.Root>
               </div>
             </div>
-            <div className="my-4">
-              <h2 className="text-xl">Application Form</h2>
-              <select
-                value={editedCampaign.formId || ""}
-                onChange={(e) => handleFieldChange('formId', e.target.value)}
-                disabled={isPublic}
-                className="text-black mt-2"
-              >
-                <option value="">Select a Form</option>
-                {forms.map((form) => (
-                  <option key={form.id} value={form.id}>
-                    {form.name}
-                  </option>
-                ))}
-              </select>
+            <div className="space-y-4 my-8">
+              <h2 className="text-2xl font-bold">Contributing</h2>
+              <div className="flex space-x-4">
+                  <div>Require approval for contributors?</div>
+                  <Switch
+                    id="requireApproval"
+                    checked={editedCampaign.requireApproval}
+                    onCheckedChange={(val) => handleFieldChange('requireApproval', val)}
+                  />
+              </div>
+              <div className="my-4">
+                <h3>Application Form</h3>
+                <select
+                  value={editedCampaign.formId || ""}
+                  onChange={(e) => handleFieldChange('formId', e.target.value)}
+                  disabled={isPublic}
+                  className="text-black mt-2"
+                >
+                  <option value="">Select a Form</option>
+                  {forms.map((form) => (
+                    <option key={form.id} value={form.id}>
+                      {form.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl">Campaign Tiers</h2>
+            <div className="mt-4">
+              <h2 className="text-2xl font-bold mb-2">Campaign Tiers</h2>
               {
                 campaignTiers.map((tier, index) => (
                   editingTierIndex === index ? (
                     <CampaignTierEditor
                       key={index}
-                      tier={tier}
+                      tier={tier as CampaignTier}
                       onSave={(updatedTier) => {
                         updateTier(index, updatedTier);
                         stopEditTier();
@@ -290,8 +318,7 @@ export default function CampaignEditor(
                     />
                   ) : (
                     <div key={index}>
-                      <CampaignTierCard tier={tier} />
-                      <Button onClick={() => startEditTier(index)}>Edit</Button>
+                      <CampaignTierCard tier={tier as CampaignTier} onClickEdit={() => startEditTier(index)} />
                     </div>
                   )
                 ))

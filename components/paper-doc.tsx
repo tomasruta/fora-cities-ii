@@ -12,7 +12,7 @@ export default function PaperDoc({
   return (
     <Card
       className={cn(
-        "relative min-h-[500px] w-full max-w-screen-lg p-12 px-8 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 shadow-lg",
+        "relative min-h-[500px] w-full max-w-screen-lg p-12 m-16 px-8 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 shadow-lg",
         className,
       )}
       {...props}
