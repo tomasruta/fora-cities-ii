@@ -310,7 +310,7 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
                   editingTierIndex === index ? (
                     <CampaignTierEditor
                       key={index}
-                      tier={tier}
+                      tier={tier as CampaignTier}
                       onSave={(updatedTier) => {
                         updateTier(index, updatedTier);
                         stopEditTier();
@@ -318,7 +318,7 @@ const updateTier = (index: number, updatedTier: EditedFields) => {
                     />
                   ) : (
                     <div key={index}>
-                      <CampaignTierCard tier={tier} onClickEdit={() => startEditTier(index)} />
+                      <CampaignTierCard tier={tier as CampaignTier} onClickEdit={() => startEditTier(index)} />
                     </div>
                   )
                 ))
