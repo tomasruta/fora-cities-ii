@@ -10,13 +10,6 @@ interface CampaignTierEditorProps {
   onSave: (tier: Partial<CampaignTier>) => void;
 }
 
-// interface EditedFields {
-//   name?: string;
-//   description?: string;
-//   quantity?: number;
-//   price?: number;
-// }
-
 export default function CampaignTierEditor({ tier, onSave }: CampaignTierEditorProps) {
   const [editedTier, setEditedTier] = useState<Partial<CampaignTier>>(
     { name: tier.name, description: tier.description, quantity: tier.quantity,
@@ -24,11 +17,14 @@ export default function CampaignTierEditor({ tier, onSave }: CampaignTierEditorP
 
   useEffect(() => {
     if (tier) {
+      if (tier.price === null) {
+        tier.price = 0;
+      }
       setEditedTier({
         name: tier.name,
         description: tier.description ?? undefined,
         quantity: tier.quantity ?? undefined,
-        price: tier.price ?? undefined,
+        price: tier.price > 0 ? tier.price : undefined,
       });
     }
   }, [tier]);
@@ -39,7 +35,6 @@ export default function CampaignTierEditor({ tier, onSave }: CampaignTierEditorP
 
   return (
     <div className="mb-4 p-4 border rounded-lg">
-      <h3 className="text-lg mb-2">Campaign Tier</h3>
       <div className="space-y-4">
         <Input
           type="text" 
@@ -58,23 +53,25 @@ export default function CampaignTierEditor({ tier, onSave }: CampaignTierEditorP
           type="number" 
           id="quantity"
           value={editedTier.quantity ?? ''}
-          placeholder="Available quantity"
-          onChange={(e) => handleFieldChange('quantity', e.target.valueAsNumber)}
+          placeholder="Number of spots in this tier (optional)"
+          onChange={(e) => handleFieldChange('quantity', e.target.value)}
         />
         <Input 
           type="number"
           id="price"
           value={editedTier.price ?? ''}
-          placeholder="Price (ETH)"
-          onChange={(e) => handleFieldChange('price', e.target.valueAsNumber)}
+          placeholder="Price"
+          onChange={(e) => handleFieldChange('price', e.target.value)}
         />
       </div>
-      <Button
-        className="mt-2"
-        onClick={() => onSave(editedTier)}
-      >
-        Save
-      </Button>
+      <div className="flex justify-end">
+        <Button
+          className="mt-2"
+          onClick={() => onSave(editedTier)}
+        >
+          Save
+        </Button>
+    </div>
     </div>
   );
 }

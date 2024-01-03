@@ -78,7 +78,7 @@ export function calcAccommodationUnitCapacity(rooms: RoomWithBedsType[]) {
 }
 
 
-function replaceNullWithUndefined(obj: Record<any, any>) {
+export function replaceNullWithUndefined(obj: Record<any, any>) {
   return _.transform(obj, function(result: any, value, key) {
     if (_.isObject(value)) {
       result[key] = replaceNullWithUndefined(value);
@@ -88,7 +88,7 @@ function replaceNullWithUndefined(obj: Record<any, any>) {
   });
 }
 
-function replaceUndefinedWithNull(obj: Record<any, any>) {
+export function replaceUndefinedWithNull(obj: Record<any, any>) {
   return _.transform(obj, function(result: any, value, key) {
     if (_.isObject(value)) {
       result[key] = replaceUndefinedWithNull(value);
@@ -105,3 +105,5 @@ export const FORA_API_URL = process.env.NEXT_PUBLIC_ROOT_DOMAIN === 'localhost:3
 export const getCityUrl = (org: Organization) => {
   return process.env.NEXT_PUBLIC_ROOT_DOMAIN === 'localhost:3000' ? `http://${org.subdomain}.localhost:3000` : `https://${org.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 }
+
+export const ETH_PRICE_IN_DOLLARS = 2347;  // this is just for testing/demo, TODO query Alchemy or something

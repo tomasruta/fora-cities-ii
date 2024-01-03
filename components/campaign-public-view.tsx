@@ -8,7 +8,7 @@ import { getCampaign, createCampaignApplication, CampaignWithData } from "@/lib/
 import LoadingDots from "@/components/icons/loading-dots";
 import { Button } from "@/components/ui/button";
 import CampaignContributeButton from "@/components/campaign-contribute-button";
-import CampaignTierCard from "@/components/campaign-tier-card";
+import CampaignPageTierCard from "@/components/campaign-page-tier-card";
 import { Progress } from "@/components/ui/progress"
 import Link from "next/link";
 import BannerImage from "./site-layouts/social-media/banner-image";
@@ -101,7 +101,7 @@ export default function CampaignPublicView(
                 <div>
                   <h2 className="text-xl">Campaign Tiers</h2>
                   {campaign.campaignTiers.map((tier: CampaignTier, index: number) =>
-                    <CampaignTierCard
+                    <CampaignPageTierCard
                       key={index}
                       tier={tier}
                     />

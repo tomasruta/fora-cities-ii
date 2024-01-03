@@ -1,11 +1,9 @@
 import React from 'react';
 import { CampaignTier } from "@prisma/client";
-import { Button } from "@/components/ui/button";
 
 
-export default function CampaignTierCard({ tier, onClickEdit }:
-  { tier: CampaignTier, onClickEdit: () => void })
-{
+export default function CampaignPageTierCard({tier}: {tier: CampaignTier}) {
+  console.log('prop:', tier);
   return (
     <div className="space-y-4 my-4 rounded-md border border-gray-500 p-4">
       <div>
@@ -23,12 +21,10 @@ export default function CampaignTierCard({ tier, onClickEdit }:
         {tier.price && 
           <div className="flex space-x-4 items-center">
             {`${Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
-                .format(tier.price)}
-            `}
+                    .format(tier.price)}`}
           </div>
         }
       </div>
-      <Button onClick={onClickEdit}>Edit</Button>
     </div>
   );
 }

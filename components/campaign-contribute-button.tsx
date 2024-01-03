@@ -8,6 +8,7 @@ import useEthereum from "@/hooks/useEthereum";
 import { ethers } from "ethers";
 import { useRouter } from "next/navigation";
 import { CampaignWithData } from "@/lib/actions";
+import { ETH_PRICE_IN_DOLLARS } from "@/lib/utils";
 
 
 interface CampaignContributeButtonProps {
@@ -35,15 +36,20 @@ export default function CampaignContributeButton({
 
   const handleContribution = async () => {
     if (isValidAmount()) {
-      contribute(amount, campaign).then(onComplete);
+      const amountETH = (parseFloat(amount) / ETH_PRICE_IN_DOLLARS).toString();
+      contribute(amountETH, campaign).then(onComplete);
     }
   };
+
 
   return (
     <div className={`flex flex-col ${className}`}>
       <div>
         <div className="text-2xl">
-          {ethers.formatEther(campaign.thresholdWei)} ETH
+          {`${Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+                .format(parseFloat(ethers.formatEther(campaign.thresholdWei))
+                * ETH_PRICE_IN_DOLLARS)}
+          `}
         </div>
         <div>
           Goal
@@ -60,13 +66,16 @@ export default function CampaignContributeButton({
         </div>
         ) : (
           <div className={"flex flex-col space-y-4 mt-4"}>
-            <Input
-              type="text"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Amount (ETH)"
-              className="w-36"
-            />
+            <div className="flex items-center">
+              $
+              <Input
+                type="text"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Amount"
+                className="w-36 ml-2"
+              />
+            </div>
             <Button
               onClick={handleContribution}
               disabled={!isValidAmount()}
