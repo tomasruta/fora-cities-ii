@@ -55,7 +55,7 @@ export default function EventListItem({
           <div className="p-3">
             <EventListItemImage
               alt={event.name ?? "Card thumbnail"}
-              src={event.image ?? "/placeholder.png"}
+              src={event.image ? event.image : event.organization.image ? event.organization.image : "/placeholder.png"}
             />
           </div>
         </div>

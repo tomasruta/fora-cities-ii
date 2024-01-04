@@ -36,6 +36,11 @@ import Link from "next/link";
 import { capitalize } from "lodash";
 import FormTitle from "../form-title";
 
+type GoogleMapsResult = {
+  place_id: string;
+  formatted_address: string;
+};
+
 export default function CreatePlaceModal({
   geoJSON,
   lng,
@@ -47,9 +52,7 @@ export default function CreatePlaceModal({
 }) {
   const form = useForm<z.infer<typeof CreatePlaceSchema>>({
     resolver: zodResolver(CreatePlaceSchema),
-    defaultValues: {
-      type: "VENUE",
-    },
+    defaultValues: {},
   });
   // const { pending } = useFormStatus();
   const [loading, setLoading] = useState(false);
@@ -60,10 +63,9 @@ export default function CreatePlaceModal({
     subdomain: string;
     path: string;
   };
-  const [selected, setSelected] = useState<any>();
+  // const [selected, setSelected] = useState<any>();
 
   async function onSubmit(data: z.infer<typeof CreatePlaceSchema>) {
-    console.log("on Submit with selected: ", selected);
     try {
       setLoading(true);
       const result = await createPlace(
@@ -85,9 +87,13 @@ export default function CreatePlaceModal({
     }
   }
 
-  function onSelected(selected: any) {
-    setSelected(selected);
+  function onSelected(selected: GoogleMapsResult) {
     console.log("selected: ", selected);
+    if (selected) {
+      form.setValue("address1", selected.formatted_address);
+    }
+
+    // setSelected(selected);
   }
 
   return (
@@ -110,10 +116,17 @@ export default function CreatePlaceModal({
           )}
         />
 
-        <div>
-          <FormLabel>Address</FormLabel>
-          <GeocodeInput onSelected={onSelected} />
-        </div>
+        <FormField
+          control={form.control}
+          name="address1"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address</FormLabel>
+              <GeocodeInput onSelected={onSelected} />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
@@ -138,7 +151,7 @@ export default function CreatePlaceModal({
                     <SelectValue placeholder="Select a type" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent defaultValue={"VENUE"}>
+                <SelectContent>
                   {["VENUE"].map((v) => {
                     return (
                       <SelectItem key={v} value={v}>

@@ -124,6 +124,7 @@
     "tiptap-markdown": "^0.8.1",
     "unist-util-visit": "^4.1.2",
     "use-debounce": "^9.0.4",
+    "vaul": "^0.8.0",
     "wagmi": "^1.3.11",
     "zod": "^3.22.4",
     "zukit": "^0.2.4"

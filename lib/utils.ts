@@ -107,3 +107,9 @@ export const getCityUrl = (org: Organization) => {
 }
 
 export const ETH_PRICE_IN_DOLLARS = 2347;  // this is just for testing/demo, TODO query Alchemy or something
+
+
+
+export const getSubdomainFromDomain = (domain: string) => domain.replace('%3A', ':').endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
+? domain.replace('%3A', ':').replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
+: domain;

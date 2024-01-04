@@ -803,6 +803,23 @@ export const deletePost = withPostAuth(async (_: FormData, post: Post) => {
   }
 });
 
+export const deleteEvent = withEventAuth(
+  async ({}, event: (Event & { organization: Organization })) => {
+    try {
+      const response = await prisma.event.delete({
+        where: {
+          id: event.id,
+        },
+      });
+      return response;
+    } catch (error: any) {
+      return {
+        error: error.message,
+      };
+    }
+  },
+);
+
 export const editUser = async (
   formData: FormData,
   _id: unknown,
@@ -815,7 +832,7 @@ export const editUser = async (
     };
   }
   const value = formData.get(key) as string;
-  
+
   try {
     let response;
     if (key === "image" || key === "logo") {
@@ -2281,11 +2298,11 @@ export const upsertOrganizationLinks = withOrganizationAuth(
 );
 
 export type CampaignWithData = Campaign & {
-  organization : Organization,
-  contributions: CampaignContribution[],
-  campaignTiers: CampaignTier[],
-  form: Form | null,
-}
+  organization: Organization;
+  contributions: CampaignContribution[];
+  campaignTiers: CampaignTier[];
+  form: Form | null;
+};
 
 export const getCampaign = async (id: string) => {
   const campaign = await prisma.campaign.findUnique({
@@ -2299,11 +2316,11 @@ export const getCampaign = async (id: string) => {
       form: true,
     },
   });
-  return campaign as CampaignWithData ?? undefined;
+  return (campaign as CampaignWithData) ?? undefined;
 };
 
 export const upsertCampaignTiers = withOrganizationAuth(
-  async (data: { tiers: CampaignTier[], campaign: Campaign }) => {
+  async (data: { tiers: CampaignTier[]; campaign: Campaign }) => {
     const result = UpsertCampaignTierSchemas.safeParse(data);
     if (!result.success) {
       throw new Error(result.error.message);
@@ -2322,14 +2339,14 @@ export const upsertCampaignTiers = withOrganizationAuth(
           ...tier,
           campaignId: data.campaign.id,
         },
-      })
-    })
+      });
+    });
 
     const tiers = await prisma.$transaction(txs);
 
     return tiers;
-  }
-)
+  },
+);
 
 export const getOrganizationForms = async (organizationId: string) => {
   const organization = await prisma.organization.findUnique({
@@ -2346,7 +2363,7 @@ export const getOrganizationForms = async (organizationId: string) => {
   }
 
   return organization.form;
-}
+};
 
 export const getFormResponses = async (formId: string) => {
   const formResponses = await prisma.formResponse.findMany({
@@ -2360,12 +2377,12 @@ export const getFormResponses = async (formId: string) => {
   });
 
   return formResponses;
-}
+};
 
 export const getFormQuestions = async (formId: string) => {
   const questions = await prisma.question.findMany({
     where: {
-      formId: formId
+      formId: formId,
     },
     include: {
       form: true,
@@ -2373,18 +2390,21 @@ export const getFormQuestions = async (formId: string) => {
   });
 
   return questions;
-}
+};
 
-export const getUserCampaignApplication = async (campaignId: string, userId: string) => {
+export const getUserCampaignApplication = async (
+  campaignId: string,
+  userId: string,
+) => {
   const campaignApplication = await prisma.campaignApplication.findFirst({
     where: {
       campaignId: campaignId,
       userId: userId,
-    }
+    },
   });
 
   return campaignApplication;
-}
+};
 
 export const createCampaignApplication = async (campaignId: string) => {
   const session = await getSession();
@@ -2398,24 +2418,27 @@ export const createCampaignApplication = async (campaignId: string) => {
     data: {
       campaignId: campaignId,
       userId: session.user.id,
-    }
-  })
+    },
+  });
 
   return campaignApplication;
-}
+};
 
-export const respondToCampaignApplication = async (applicationId: string,
-  isApprove: boolean) =>
-{
+export const respondToCampaignApplication = async (
+  applicationId: string,
+  isApprove: boolean,
+) => {
   await prisma.campaignApplication.update({
     where: {
-      id: applicationId
+      id: applicationId,
     },
     data: {
-      status: isApprove ? ApplicationStatus.ACCEPTED : ApplicationStatus.REJECTED
-    }
+      status: isApprove
+        ? ApplicationStatus.ACCEPTED
+        : ApplicationStatus.REJECTED,
+    },
   });
-}
+};
 
 export const createInvite = async (data: any) => {
   const input = CreateInviteSchema.safeParse(data);

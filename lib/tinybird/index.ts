@@ -20,7 +20,6 @@ export const getCityPageViews = async (subdomain: string) => {
     headers: {
       Authorization: "Bearer " + process.env.TINYBIRD_TOKEN_CITY_PAGE_VIEWS,
     },
-    cache: 'no-store'
   })
     .then((r) => r.json())
     .then((r) => r)

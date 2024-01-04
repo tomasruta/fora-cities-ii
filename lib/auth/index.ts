@@ -264,11 +264,14 @@ export function withOrganizationAuth(action: any) {
 }
 
 export function withEventAuth(action: any) {
+
   return async (
     formData: any | null,
     context: { params: { subdomain: string; path: string } },
     key: string | null,
   ) => {
+    console.log('context: ', context)
+
     const session = await getSession();
     if (!session) {
       return {
@@ -286,6 +289,8 @@ export function withEventAuth(action: any) {
         organization: true,
       },
     });
+    console.log('eventData:', data)
+
 
     if (!data?.organization) {
       return {
@@ -298,6 +303,7 @@ export function withEventAuth(action: any) {
       data.id,
       "Host",
     );
+    console.log('userIsEventHost:', userIsEventHost)
 
     if (!userIsEventHost) {
       return {

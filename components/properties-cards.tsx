@@ -44,7 +44,7 @@ export default function PropertiesCards({
           <div key={property.id}>
             <div className="flex justify-between">
               <h4 className="mb-4 text-2xl font-medium">{property.name}</h4>
-              <Sheet>
+              {/* <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline">
                     <Plus className="mr-2 h-4 w-4" />
@@ -60,9 +60,8 @@ export default function PropertiesCards({
                   </SheetHeader>
                   <CreateAccomodationUnitForm place={property} />
                 </SheetContent>
-              </Sheet>
+              </Sheet> */}
             </div>
-            <Card>
               <div>
                 {property.accommodationUnit.map((unit) => {
                   const totalBeds = unit.rooms.reduce(
@@ -86,7 +85,6 @@ export default function PropertiesCards({
                   );
                 })}
               </div>
-            </Card>
           </div>
         );
       })}

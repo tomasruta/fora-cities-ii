@@ -7,6 +7,7 @@ import {
   // getUserEventRoles,
   updateEvent,
 } from "@/lib/actions";
+import DeleteEventForm from "@/components/form/delete-event-form";
 // import DeletePostForm from "@/components/form/delete-post-form";
 
 export default async function EventSettings({
@@ -20,6 +21,7 @@ export default async function EventSettings({
   }
 
   console.log("Path: ", params.path);
+  console.log("Subdomain: ", params.subdomain);
 
   const data = await prisma.event.findFirst({
     where: {
@@ -29,6 +31,8 @@ export default async function EventSettings({
       path: params.path,
     },
   });
+
+  console.log("data: ", data);
 
   return (
     <div className="flex flex-col space-y-6">
@@ -50,7 +54,7 @@ export default async function EventSettings({
         inputAttrs={{
           name: "name",
           type: "text",
-          defaultValue: session.user.name!,
+          defaultValue: data?.name!,
           placeholder: data?.name || "Your Event",
           maxLength: 32,
         }}
@@ -63,11 +67,12 @@ export default async function EventSettings({
         inputAttrs={{
           name: "description",
           type: "text",
-          defaultValue: session.user.name!,
+          defaultValue: data?.description!,
           placeholder: data?.description || "Describe your event.",
         }}
         handleSubmit={updateEvent}
       />
+      {data && <DeleteEventForm eventName={data?.name} />}
     </div>
   );
 }

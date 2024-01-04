@@ -1,7 +1,7 @@
 "use client";
 
 import LoadingDots from "@/components/icons/loading-dots";
-import { cn } from "@/lib/utils";
+import { cn, getSubdomainFromDomain } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import DomainStatus from "./domain-status";
 import DomainConfiguration from "./domain-configuration";
 import Uploader from "./uploader";
-import { track } from "@/lib/analytics";
 
 export default function Form({
   title,
@@ -32,9 +31,17 @@ export default function Form({
   };
   handleSubmit: any;
 }) {
-  const params = useParams() as { subdomain?: string; path?: string, domain?: string };
+  const params = useParams() as {
+    subdomain?: string;
+    path?: string;
+    domain?: string;
+  };
 
-  const subdomain = params.subdomain || params.domain || undefined
+  const subdomain = params.subdomain
+    ? params.subdomain
+    : params.domain
+    ? getSubdomainFromDomain(params.domain)
+    : undefined;
 
   const router = useRouter();
   const { update } = useSession();
@@ -49,7 +56,11 @@ export default function Form({
         ) {
           return;
         }
-        handleSubmit(data, { ...params, ...(params.domain ? ({ subdomain: params.domain}) : ({})),  }, inputAttrs.name).then(
+        const ctxParams = {
+          ...params,
+          ...(params.domain ? { subdomain } : {}),
+        };
+        handleSubmit(data, { params: ctxParams }, inputAttrs.name).then(
           async (res: any) => {
             if (res.error) {
               toast.error(res.error);

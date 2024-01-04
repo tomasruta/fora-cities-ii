@@ -8,6 +8,7 @@ export default async function CitySettingsIndex({
 }: {
   params: { subdomain: string };
 }) {
+  
   const data = await prisma.organization.findUnique({
     where: {
       subdomain: params.subdomain,

@@ -161,6 +161,17 @@ model Event {
   parentId       String?
   parent         Event?       @relation("EventToEvent", fields: [parentId], references: [id])
   children       Event[]      @relation("EventToEvent")
+  eventPlaces EventPlace[]
+}
+
+model EventPlace {
+  id      String @id @default(cuid())
+  eventId String
+  placeId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, placeId])
 }
 
 model OrganizationRole {
@@ -377,6 +388,8 @@ model Place {
   user              User?               @relation(fields: [userId], references: [id])
   media             Media[]
   accommodationUnit AccommodationUnit[]
+  eventPlaces EventPlace[]
+
 }
 
 model Media {

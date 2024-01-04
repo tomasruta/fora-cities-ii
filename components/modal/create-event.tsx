@@ -3,17 +3,12 @@
 import { toast } from "sonner";
 import { createEvent } from "@/lib/actions";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import LoadingDots from "@/components/icons/loading-dots";
-import { useModal } from "./provider";
-import va from "@vercel/analytics";
 import { FormEvent, useEffect, useState } from "react";
-import { Organization } from "@prisma/client";
+import { Organization, Place } from "@prisma/client";
 import FormButton from "./form-button";
 import { DatePicker } from "../form-builder/date-picker";
 import TimePicker from "../ui/time-picker";
 import { Input } from "../ui/input";
-import { track } from "@/lib/analytics";
 
 export function combineDateAndTime(date: Date, timeInMs: string) {
   const timeElapsed = parseInt(timeInMs);
@@ -39,13 +34,15 @@ export function combineDateAndTime(date: Date, timeInMs: string) {
 
 export default function CreateEventModal({
   organization,
+  places,
   redirectBaseUrl,
 }: {
   organization: Organization;
+  places: Place[],
   redirectBaseUrl?: string;
 }) {
   const router = useRouter();
-  const modal = useModal();
+  // const modal = useModal();
 
   const [data, setData] = useState<{
     name: string;
@@ -116,7 +113,7 @@ export default function CreateEventModal({
   return (
     <form
       onSubmit={onSubmit}
-      className="mx-auto w-full rounded-md bg-white dark:bg-gray-900 md:max-w-md md:border md:border-gray-200 md:shadow dark:md:border-gray-700"
+      className="mx-auto pt-10 md:pt-0 w-full rounded-md bg-white dark:bg-gray-900 md:max-w-md md:border md:border-gray-200 md:shadow dark:md:border-gray-700"
     >
       <div className="m.d:p-10 relative flex flex-col space-y-4 p-5">
         <h2 className="font-cal text-2xl dark:text-white">

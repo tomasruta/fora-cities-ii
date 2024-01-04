@@ -5,7 +5,7 @@ import { Event } from "@prisma/client";
 import { getSiteData } from "@/lib/fetchers";
 
 export type EventFeedEvent = Event & {
-  organization: { subdomain: string | null };
+  organization: { subdomain: string | null, image: string | null };
   eventRole: {
     role: {
       id: string;
@@ -62,6 +62,7 @@ export default async function EventList({
       organization: {
         select: {
           subdomain: true,
+          image: true,
         },
       },
       eventRole: {
