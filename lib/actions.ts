@@ -354,6 +354,19 @@ export const createEvent = async (input: {
     "Admin",
   );
 
+  if (input.placeId) {
+    const placeIsAvailable = await isTimeSlotAvailable(
+      input.placeId,
+      startingAt,
+      endingAt,
+    );
+    if (!placeIsAvailable) {
+      return {
+        error: "This location has an overlapping event at that time.",
+      };
+    }
+  }
+
   try {
     const [event, role] = await prisma.$transaction([
       prisma.event.create({
@@ -431,6 +444,71 @@ export const createEvent = async (input: {
   }
 };
 
+export async function isTimeSlotAvailable(
+  placeId: string,
+  startingAt: Date,
+  endingAt: Date,
+): Promise<boolean> {
+  const overlappingEvents = await prisma.event.findMany({
+    where: {
+      eventPlaces: {
+        some: {
+          placeId: placeId,
+        },
+      },
+      OR: [
+        {
+          // New event starts during another event
+          AND: [
+            {
+              startingAt: {
+                lte: startingAt,
+              },
+            },
+            {
+              endingAt: {
+                gte: startingAt,
+              },
+            },
+          ],
+        },
+        {
+          // New event ends during another event
+          AND: [
+            {
+              startingAt: {
+                lte: endingAt,
+              },
+            },
+            {
+              endingAt: {
+                gte: endingAt,
+              },
+            },
+          ],
+        },
+        {
+          // New event surrounds another event
+          AND: [
+            {
+              startingAt: {
+                gte: startingAt,
+              },
+            },
+            {
+              endingAt: {
+                lte: endingAt,
+              },
+            },
+          ],
+        },
+      ],
+    },
+  });
+
+  return overlappingEvents.length === 0;
+}
+
 export async function getOrganizationData(domain: string) {
   return await prisma.organization.findFirst({
     where: {
@@ -453,9 +531,9 @@ export async function getEventData(path: string, domain: string) {
       organization: true,
       eventPlaces: {
         include: {
-          place: true
-        }
-      }
+          place: true,
+        },
+      },
     },
   });
 }
@@ -1471,7 +1549,6 @@ export async function getEventTicketTiers(eventId: string) {
 
   return tiers;
 }
-
 
 export const issueTicket = withEventAuth(
   async (
