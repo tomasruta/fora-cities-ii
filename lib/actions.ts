@@ -332,6 +332,7 @@ export const createEvent = async (input: {
   path: string;
   startingAt: Date;
   endingAt: Date;
+  placeId?: string;
 }) => {
   const session = await getSession();
   if (!session?.user.id) {
@@ -376,7 +377,7 @@ export const createEvent = async (input: {
       }),
     ]);
 
-    const [_eventRole, _userRole] = await prisma.$transaction([
+    const connectionTxs: any[] = [
       prisma.eventRole.create({
         data: {
           event: {
@@ -405,7 +406,21 @@ export const createEvent = async (input: {
           },
         },
       }),
-    ]);
+    ];
+
+    // If placeId is provided, create an EventPlace record
+    if (input.placeId) {
+      connectionTxs.push(
+        prisma.eventPlace.create({
+          data: {
+            eventId: event.id,
+            placeId: input.placeId,
+          },
+        }),
+      );
+    }
+
+    await prisma.$transaction(connectionTxs);
 
     return event;
   } catch (error: any) {
@@ -436,6 +451,11 @@ export async function getEventData(path: string, domain: string) {
     },
     include: {
       organization: true,
+      eventPlaces: {
+        include: {
+          place: true
+        }
+      }
     },
   });
 }
@@ -804,7 +824,7 @@ export const deletePost = withPostAuth(async (_: FormData, post: Post) => {
 });
 
 export const deleteEvent = withEventAuth(
-  async ({}, event: (Event & { organization: Organization })) => {
+  async ({}, event: Event & { organization: Organization }) => {
     try {
       const response = await prisma.event.delete({
         where: {
@@ -1451,6 +1471,7 @@ export async function getEventTicketTiers(eventId: string) {
 
   return tiers;
 }
+
 
 export const issueTicket = withEventAuth(
   async (

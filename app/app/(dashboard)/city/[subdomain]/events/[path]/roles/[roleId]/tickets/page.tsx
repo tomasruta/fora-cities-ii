@@ -2,14 +2,6 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import notFound from "../../../not-found";
-// import { updateOrganization } from "@/lib/actions";
-// import Form from "@/components/form";
-// import {
-//   updatePostMetadata,
-//   getUserEventRoles,
-//   updateEvent,
-// } from "@/lib/actions";
-// // import DeletePostForm from "@/components/form/delete-post-form";
 
 export default async function EventTicketSettings({
   params,
@@ -39,10 +31,6 @@ export default async function EventTicketSettings({
         <h1 className="font-cal text-3xl font-bold dark:text-white">
           {data.name} Tickets
         </h1>
-        {/* <OpenModalButton text="Create Event">
-          <CreateEventModal organization={organization} />
-        </OpenModalButton> */}
-
       </div>
     </div>
   );

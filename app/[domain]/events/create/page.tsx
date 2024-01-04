@@ -17,7 +17,6 @@ export default async function AllEvents({
     }
   })]);
 
-
   if (!organization) {
     return <NotFoundCity />;
   }

@@ -49,7 +49,7 @@ export default async function EventSettings({
       />
       <Form
         title="Name"
-        description="Your name on this app."
+        description="The name of the event"
         helpText="Please use 32 characters maximum."
         inputAttrs={{
           name: "name",
@@ -62,7 +62,7 @@ export default async function EventSettings({
       />
       <Form
         title="Description"
-        description="Your name on this app."
+        description="Your description of the event."
         helpText="Please use 32 characters maximum."
         inputAttrs={{
           name: "description",

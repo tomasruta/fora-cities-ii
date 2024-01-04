@@ -7,11 +7,19 @@ export default async function AllEvents({
 }: {
   params: { subdomain: string };
 }) {
-  const organization = await prisma.organization.findUnique({
+  const [organization, places] = await Promise.all([prisma.organization.findUnique({
     where: {
       subdomain: params.subdomain,
     },
-  });
+  }), prisma.place.findMany({
+    where: {
+      organization: {
+        subdomain: params.subdomain,
+      }
+    }
+  })]);
+
+
 
   if (!organization) {
     return <NotFoundSite />;
@@ -19,7 +27,7 @@ export default async function AllEvents({
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-20 md:p-8">
-        <CreateEventModal organization={organization} />
+        <CreateEventModal organization={organization} places={places} />
     </div>
   );
 }

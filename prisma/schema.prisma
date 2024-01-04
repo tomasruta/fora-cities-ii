@@ -186,8 +186,8 @@ model OrganizationRole {
 model EventRole {
   roleId  String
   eventId String
-  role    Role   @relation(fields: [roleId], references: [id])
-  event   Event  @relation(fields: [eventId], references: [id])
+  role    Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@id([roleId, eventId])
 }
@@ -229,8 +229,8 @@ model UserRole {
   id     String @id @default(cuid())
   userId String
   roleId String
-  user   User   @relation(fields: [userId], references: [id])
-  role   Role   @relation(fields: [roleId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@unique([userId, roleId])
 }

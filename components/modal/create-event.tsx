@@ -9,6 +9,21 @@ import FormButton from "./form-button";
 import { DatePicker } from "../form-builder/date-picker";
 import TimePicker from "../ui/time-picker";
 import { Input } from "../ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "../ui/select";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "../ui/form";
 
 export function combineDateAndTime(date: Date, timeInMs: string) {
   const timeElapsed = parseInt(timeInMs);
@@ -38,7 +53,7 @@ export default function CreateEventModal({
   redirectBaseUrl,
 }: {
   organization: Organization;
-  places: Place[],
+  places: Place[];
   redirectBaseUrl?: string;
 }) {
   const router = useRouter();
@@ -52,6 +67,7 @@ export default function CreateEventModal({
     startingAtTime?: string;
     endingAtDate?: Date;
     endingAtTime?: string;
+    placeId?: string;
   }>({
     name: "",
     description: "",
@@ -61,6 +77,8 @@ export default function CreateEventModal({
 
     endingAtDate: new Date(),
     endingAtTime: undefined,
+
+    placeId: undefined,
   });
 
   useEffect(() => {
@@ -88,6 +106,8 @@ export default function CreateEventModal({
     const name = data.name;
     const description = data.description;
     const path = data.path;
+    const placeId = data.placeId;
+
     createEvent({
       name,
       description,
@@ -95,6 +115,7 @@ export default function CreateEventModal({
       organizationId: organization.id,
       startingAt,
       endingAt,
+      placeId, 
     }).then((res: any) => {
       if (res.error) {
         toast.error(res.error);
@@ -113,7 +134,7 @@ export default function CreateEventModal({
   return (
     <form
       onSubmit={onSubmit}
-      className="mx-auto pt-10 md:pt-0 w-full rounded-md bg-white dark:bg-gray-900 md:max-w-md md:border md:border-gray-200 md:shadow dark:md:border-gray-700"
+      className="mx-auto w-full rounded-md bg-white pt-10 md:max-w-md md:border md:border-gray-200 md:pt-0 md:shadow dark:bg-gray-900 dark:md:border-gray-700"
     >
       <div className="m.d:p-10 relative flex flex-col space-y-4 p-5">
         <h2 className="font-cal text-2xl dark:text-white">
@@ -183,6 +204,31 @@ export default function CreateEventModal({
 
         <div className="flex flex-col space-y-2">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-400">
+            Location
+          </label>
+
+          <Select
+            onValueChange={(value) => {
+              setData((prev) => ({ ...prev, placeId: value }));
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a location" />
+            </SelectTrigger>
+            <SelectContent>
+              {places.map((place) => {
+                return (
+                  <SelectItem key={place.id} value={place.id}>
+                    {place.name}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-400">
             Starts At
           </label>
           <div className="flex">
@@ -221,7 +267,7 @@ export default function CreateEventModal({
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end rounded-b-lg border-t border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800 md:px-10">
+      <div className="flex items-center justify-end rounded-b-lg border-t border-gray-200 bg-gray-50 p-3 md:px-10 dark:border-gray-700 dark:bg-gray-800">
         <FormButton text={"Create Event"} />
       </div>
     </form>
