@@ -11,6 +11,7 @@ import CampaignContributeButton from "@/components/campaign-contribute-button";
 import CampaignPageTierCard from "@/components/campaign-page-tier-card";
 import { Progress } from "@/components/ui/progress"
 import Link from "next/link";
+import BannerImage from "./site-layouts/social-media/banner-image";
 
 
 export default function CampaignPublicView(
@@ -81,6 +82,7 @@ export default function CampaignPublicView(
         <div>Campaign not found</div>
       ) : (
         <div className="flex space-x-16">
+          <BannerImage />
           <div className="flex-grow 0 flex-basis 2/3">
             <div className="space-y-4">
               <h1 className="text-2xl font-bold mb-6">{campaign.name}</h1>

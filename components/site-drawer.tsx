@@ -145,11 +145,6 @@ export default function Drawer({ children }: { children: ReactNode }) {
           href: `/city/${subdomain}/events/${path}/preview`,
           icon: <FileSymlink width={18} />,
         },
-        // {
-        //   name: "Event Forms",
-        //   href: `/city/${subdomain}/events/${path}/forms`,
-        //   icon: <ClipboardSignature width={18} />,
-        // },
         {
           name: "Settings",
           href: `/city/${subdomain}/events/${segments[3]}/settings`,
@@ -179,36 +174,12 @@ export default function Drawer({ children }: { children: ReactNode }) {
           isActive: segments.includes("events"),
           icon: <Ticket width={18} />,
         },
-        // {
-        //   name: "Housing",
-        //   href: `/city/${subdomain}/housing`,
-        //   isActive: segments.includes("housing"),
-        //   icon: <BedSingle width={18} />,
-        // },
         {
           name: "Campaigns",
           href: `/city/${subdomain}/campaigns`,
           isActive: segments.includes("campaigns"),
           icon: <CircleDollarSign width={18} />,
         },
-        // {
-        //   name: "Forms",
-        //   href: `/city/${subdomain}/forms`,
-        //   isActive: segments.includes("forms"),
-        //   icon: <ClipboardSignature width={18} />,
-        // },
-        // {
-        //   name: "Docs",
-        //   href: `/city/${subdomain}/docs`,
-        //   isActive: segments.includes("docs"),
-        //   icon: <Newspaper width={18} />,
-        // },
-        // {
-        //   name: "Analytics",
-        //   href: `/city/${subdomain}/analytics`,
-        //   isActive: segments.includes("analytics"),
-        //   icon: <BarChart3 width={18} />,
-        // },
         {
           name: "Settings",
           href: `/city/${subdomain}/settings`,
@@ -246,48 +217,12 @@ export default function Drawer({ children }: { children: ReactNode }) {
         isActive: segments.length === 2,
         icon: <Home width={18} />,
       },
-      // {
-      //   name: "People",
-      //   href: `/people`,
-      //   isActive: segments.includes("people"),
-      //   icon: <Users2 width={18} />,
-      // },
       {
         name: "Events",
         href: `/events`,
         isActive: segments.includes("events"),
         icon: <CalendarDays width={18} />,
       },
-      // {
-      //   name: "Housing",
-      //   href: `/${subdomain}/housing`,
-      //   isActive: segments.includes("housing"),
-      //   icon: <BedSingle width={18} />,
-      // },
-      // {
-      //   name: "Campaigns",
-      //   href: `/campaigns`,
-      //   isActive: segments.includes("campaigns"),
-      //   icon: <CircleDollarSign width={18} />,
-      // },
-      // {
-      //   name: "Events",
-      //   href: "/events",
-      //   isActive: segments[0] === "events",
-      //   icon: <Globe width={18} />,
-      // },
-      // {
-      //   name: "Sites",
-      //   href: "/cities",
-      //   isActive: segments[0] === "sites",
-      //   icon: <Globe width={18} />,
-      // },
-      // {
-      //   name: "Settings",
-      //   href: "/settings",
-      //   isActive: segments[0] === "settings",
-      //   icon: <Settings width={18} />,
-      // },
     ];
   }, [segments, subdomain, path, organizationSubdomain]);
 

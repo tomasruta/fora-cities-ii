@@ -58,10 +58,14 @@ export default function CreateRoleModal() {
       className="w-full rounded-md bg-gray-200/50 backdrop-blur-xl  dark:bg-gray-900/50 md:max-w-md md:border md:border-gray-200 md:shadow dark:md:border-gray-700"
     >
       <div className="relative flex flex-col space-y-4 p-5 md:p-10">
-        <h2 className="font-cal text-2xl dark:text-gray-100">
-          Create a new role
-        </h2>
-
+        <div>
+          <h2 className="font-serif text-2xl dark:text-gray-100">
+            Create a new role
+          </h2>
+          <p className=" dark:text-gray-100">
+            Roles grant people access rights to a city.
+          </p>
+        </div>
         <div className="flex flex-col space-y-2">
           <label
             htmlFor="name"

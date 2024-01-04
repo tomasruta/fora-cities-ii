@@ -50,6 +50,11 @@ export default function CampaignCard({
               </AspectRatio>
             </div>
           ) : null}
+          {!campaign.deployed && (
+            <span className="absolute bottom-2 right-2 rounded-md border border-gray-350 bg-gray-100 px-3 py-0.5 text-sm font-medium text-gray-600 shadow-md">
+              Draft
+            </span>
+          )}
         </div>
       </Link>
     </Card>

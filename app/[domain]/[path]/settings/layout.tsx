@@ -46,7 +46,7 @@ export default async function EventSettingsLayout({
   const url = `${event.organization.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${event.path}`;
 
   return (
-    <>
+    <div className="flex max-w-screen-xl flex-col space-y-12 p-5 lg:p-8">
       <div className="flex flex-col items-center space-x-4 space-y-2 sm:flex-row sm:space-y-0">
         <h1 className="font-cal text-xl font-bold dark:text-white sm:text-3xl">
           Settings for {event.name}
@@ -66,6 +66,6 @@ export default async function EventSettingsLayout({
       </div>
       <EventSettingsNav />
       {children}
-    </>
+    </div>
   );
 }

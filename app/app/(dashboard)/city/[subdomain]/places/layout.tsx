@@ -42,9 +42,9 @@ export default async function HousingPage({
   return (
     <div className="h-full flex-1 flex-col space-y-8 py-8 lg:p-8 md:flex">
       <DashboardHeader
-        title="Housing"
+        title="Places"
         ActionButton={
-          <OpenModalButton text="Add Property">
+          <OpenModalButton text="Add Place">
             <CreatePlaceModal />
           </OpenModalButton>
         }

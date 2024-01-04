@@ -15,6 +15,8 @@ import {
   ClipboardSignature,
   BedSingle,
   Home,
+  Building,
+  Building2,
   FileSymlink,
   CircleDollarSign,
 } from "lucide-react";
@@ -175,16 +177,21 @@ export default function Drawer({ children }: { children: ReactNode }) {
           icon: <LayoutDashboard width={18} />,
         },
         {
+          name: "Campaigns",
+          href: `/city/${subdomain}/campaigns`,
+          isActive: segments.includes("campaigns"),
+          icon: <CircleDollarSign width={18} />,
+        },
+        {
           name: "People",
           href: `/city/${subdomain}/people`,
           isActive: segments.includes("people"),
           icon: <Users2 width={18} />,
         },
         {
-          name: "Campaigns",
-          href: `/city/${subdomain}/campaigns`,
-          isActive: segments.includes("campaigns"),
-          icon: <CircleDollarSign width={18} />,
+          name: "Roles",
+          href: `/city/${subdomain}/roles`,
+          icon: <Drama className="w-[18px]" />,
         },
         {
           name: "Events",
@@ -192,12 +199,12 @@ export default function Drawer({ children }: { children: ReactNode }) {
           isActive: segments.includes("events"),
           icon: <Ticket width={18} />,
         },
-        // {
-        //   name: "Housing",
-        //   href: `/city/${subdomain}/housing`,
-        //   isActive: segments.includes("housing"),
-        //   icon: <BedSingle width={18} />,
-        // },
+        {
+          name: "Places",
+          href: `/city/${subdomain}/places`,
+          isActive: segments.includes("places"),
+          icon: <Building2 width={18} />,
+        },
         {
           name: "Forms",
           href: `/city/${subdomain}/forms`,

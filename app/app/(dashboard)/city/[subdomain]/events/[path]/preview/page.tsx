@@ -20,6 +20,11 @@ export default async function EventPage({
     },
     include: {
       organization: true,
+      eventPlaces: {
+        include: {
+          place: true,
+        },
+      },
     },
   });
 
@@ -31,5 +36,11 @@ export default async function EventPage({
 
   const ticketTiers = await getEventTicketTiers(event.id);
 
-  return <Event event={event} rolesAndUsers={rolesAndUsers} ticketTiers={ticketTiers} />;
+  return (
+    <Event
+      event={event}
+      rolesAndUsers={rolesAndUsers}
+      ticketTiers={ticketTiers}
+    />
+  );
 }

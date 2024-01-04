@@ -1,6 +1,6 @@
 "use server";
 
-type PageViewsData = {
+export type PageViewsData = {
   hostname: string;
   path: string;
   "count()": number;
@@ -12,8 +12,6 @@ export const getCityPageViews = async (subdomain: string) => {
   );
 
   const hostname = `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-
-  console.log("hostname: ", hostname);
 
   url.searchParams.append("hostname", hostname);
   url.searchParams.append("custom_domain", subdomain);

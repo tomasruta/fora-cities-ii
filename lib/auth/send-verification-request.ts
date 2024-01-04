@@ -6,7 +6,7 @@
 
 import { SendVerificationRequestParams } from "next-auth/providers/email";
 import nodemailer from "nodemailer";
-import { sendMagicLinkEmail } from "../email-templates/magic-link";
+import { sendMagicLinkEmail } from "../email/templates/magic-link";
 
 export default async function sendVerificationRequest({
   identifier: email,
