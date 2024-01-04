@@ -315,7 +315,7 @@ export default function CampaignEditor({
                     />
                   ) : (
                     <div key={index}>
-                      <CampaignTierCard tier={tier} />
+                      <CampaignTierCard tier={tier} onClickEdit={() => console.log('unhandled click')} />
                       <Button onClick={() => startEditTier(index)}>Edit</Button>
                     </div>
                   ),
