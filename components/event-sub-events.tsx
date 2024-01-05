@@ -12,6 +12,8 @@ import OpenModalButton from "./open-modal-button";
 import CreateEventModal from "./modal/create-event";
 import prisma from "@/lib/prisma";
 import EventListItem from "./event-list-item";
+import ResponsiveDialog from "./responsive-dialog";
+import { Button } from "./ui/button";
 
 export default async function EventSubEvents({
   event,
@@ -72,25 +74,25 @@ export default async function EventSubEvents({
   return (
     <div>
       <CardHeader>
-        <CardTitle>Happening During {event.name}</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>Events</CardTitle>
+          <ResponsiveDialog
+            Trigger={
+              <Button variant={"outline"} size={"sm"}>
+                Host Sub Event
+              </Button>
+            }
+          >
+            <CreateEventModal
+              organization={org}
+              places={places}
+              parentEvent={event}
+              redirectBaseUrl={"/"}
+            />
+          </ResponsiveDialog>
+        </div>
       </CardHeader>
       <CardContent>
-        {userIsHost && (
-          <div>
-            <OpenModalButton
-              text="Host Sub Event"
-              variant={"outline"}
-              size={"sm"}
-            >
-              <CreateEventModal
-                organization={org}
-                places={places}
-                parentEvent={event}
-                redirectBaseUrl={"/"}
-              />
-            </OpenModalButton>
-          </div>
-        )}
         <div className="my-3 w-full space-y-5">
           {subevents.map((event) => {
             return (

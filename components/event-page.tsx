@@ -36,6 +36,7 @@ import HeaderMainTitle from "./site-layouts/social-media/header-main-title";
 import HeaderMainDescription from "./site-layouts/social-media/header-main-description";
 import { LineGradient } from "./line-gradient";
 import { Button } from "./ui/button";
+import { getSession } from "@/lib/auth";
 import { Session } from "next-auth";
 import { format } from "date-fns";
 import { EventHost } from "./event-list";
@@ -267,24 +268,24 @@ export default function EventPage({
   ticketTiers: (TicketTier & { role: Role; _count: { tickets: number } })[];
   userSession?: Session;
 }) {
-  const uniqueUsers = useMemo(
-    () =>
-      Array.from(
-        new Map(
-          rolesAndUsers.map((item) => [item.user.id, item.user]),
-        ).values(),
-      ),
-    [rolesAndUsers],
-  );
-  const uniqueRoles = useMemo(
-    () =>
-      Array.from(
-        new Map(
-          rolesAndUsers.map((item) => [item.role.id, item.role]),
-        ).values(),
-      ),
-    [rolesAndUsers],
-  );
+  // const uniqueUsers = useMemo(
+  //   () =>
+  //     Array.from(
+  //       new Map(
+  //         rolesAndUsers.map((item) => [item.user.id, item.user]),
+  //       ).values(),
+  //     ),
+  //   [rolesAndUsers],
+  // );
+  // const uniqueRoles = useMemo(
+  //   () =>
+  //     Array.from(
+  //       new Map(
+  //         rolesAndUsers.map((item) => [item.role.id, item.role]),
+  //       ).values(),
+  //     ),
+  //   [rolesAndUsers],
+  // );
 
   const hostUsers = useMemo(
     () => rolesAndUsers.filter((ru) => ru.role.name === "Host"),
