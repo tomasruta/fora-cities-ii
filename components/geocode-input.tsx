@@ -4,7 +4,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Input } from "./ui/input";
 import debounce from "lodash/debounce";
 
-export const GeocodeInput = ({ onSelected }: { onSelected?: (selected: any) => void}) => {
+export const GeocodeInput = ({
+  onSelected,
+  onChange,
+}: {
+  onSelected?: (arg0: any) => void;
+  onChange?: (arg0: string) => void;
+}) => {
   const [address, setAddress] = useState("");
   const [selected, setSelected] = useState<any>();
   const [loading, setLoading] = useState<any>(false);
@@ -26,16 +32,20 @@ export const GeocodeInput = ({ onSelected }: { onSelected?: (selected: any) => v
   // ); // 500ms delay
 
   const debouncedGeocode = useCallback(
-    debounce((address) => {
-      setLoading(true);
+    debounce(
+      (address) => {
+        setLoading(true);
 
-      geocodeAction(address).then((res) => {
-        console.log("response: ", res);
-        setResults(res);
-        setLoading(false);
-      });
-    }, 300, { leading: false, trailing: true }), // 500ms delay
-    []
+        geocodeAction(address).then((res) => {
+          console.log("response: ", res);
+          setResults(res);
+          setLoading(false);
+        });
+      },
+      300,
+      { leading: false, trailing: true },
+    ), // 500ms delay
+    [],
   );
 
   useEffect(() => {
@@ -62,8 +72,11 @@ export const GeocodeInput = ({ onSelected }: { onSelected?: (selected: any) => v
         value={address}
         placeholder="123 main st"
         onChange={(e) => {
-          setSelected(undefined)
-          setAddress(e.target.value)
+          setSelected(undefined);
+          setAddress(e.target.value);
+          if (onChange) {
+            onChange(e.target.value);
+          }
         }}
       />
       {!selected && (
@@ -77,7 +90,7 @@ export const GeocodeInput = ({ onSelected }: { onSelected?: (selected: any) => v
                 setAddress(result.formatted_address);
                 setSelected(result);
                 if (onSelected) {
-                  onSelected(result)
+                  onSelected(result);
                 }
               }}
             >

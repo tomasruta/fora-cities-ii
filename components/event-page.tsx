@@ -40,6 +40,7 @@ import { getSession } from "@/lib/auth";
 import { Session } from "next-auth";
 import { format } from "date-fns";
 import { EventHost } from "./event-list";
+import EventSubEvents from "./event-sub-events";
 
 function CalendarView({ startingAt }: { startingAt: Date }) {
   return (
@@ -267,24 +268,24 @@ export default function EventPage({
   ticketTiers: (TicketTier & { role: Role; _count: { tickets: number } })[];
   userSession?: Session;
 }) {
-  const uniqueUsers = useMemo(
-    () =>
-      Array.from(
-        new Map(
-          rolesAndUsers.map((item) => [item.user.id, item.user]),
-        ).values(),
-      ),
-    [rolesAndUsers],
-  );
-  const uniqueRoles = useMemo(
-    () =>
-      Array.from(
-        new Map(
-          rolesAndUsers.map((item) => [item.role.id, item.role]),
-        ).values(),
-      ),
-    [rolesAndUsers],
-  );
+  // const uniqueUsers = useMemo(
+  //   () =>
+  //     Array.from(
+  //       new Map(
+  //         rolesAndUsers.map((item) => [item.user.id, item.user]),
+  //       ).values(),
+  //     ),
+  //   [rolesAndUsers],
+  // );
+  // const uniqueRoles = useMemo(
+  //   () =>
+  //     Array.from(
+  //       new Map(
+  //         rolesAndUsers.map((item) => [item.role.id, item.role]),
+  //       ).values(),
+  //     ),
+  //   [rolesAndUsers],
+  // );
 
   const hostUsers = useMemo(
     () => rolesAndUsers.filter((ru) => ru.role.name === "Host"),
@@ -340,8 +341,14 @@ export default function EventPage({
           </div>
         </div>
         <div className="mx-auto grid w-full grid-cols-1 md:gap-6 lg:grid-cols-3">
-          <div className="col-span-1 mx-auto flex w-full flex-col space-y-6 lg:col-span-2">
+          <div className="col-span-1 mx-auto flex w-full flex-col lg:col-span-2">
             <AboutCard event={event} />
+            <EventSubEvents
+              event={event}
+              org={event.organization}
+              places={event.eventPlaces.map(({ place }) => place)}
+              userIsHost={userIsHost}
+            />
           </div>
           {/* <RegistrationCard event={event} ticketTiers={ticketTiers} /> */}
           <div className="col-span-1 space-y-6">
@@ -356,6 +363,7 @@ export default function EventPage({
     </>
   );
 }
+
 
 function EventPageOrganization({ org }: { org: Organization }) {
   return (

@@ -18,7 +18,7 @@ export default function EventListItem({
 
   const hosts = uniqueHosts(event);
   return (
-    <div>
+    <div className="w-full">
       {event.startingAt ? (
         <div className="mb-3 space-x-2">
           <span className="text-lg font-semibold tracking-tight text-gray-900 dark:text-gray-100">

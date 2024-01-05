@@ -56,6 +56,7 @@ export default function CreatePlaceModal({
   });
   // const { pending } = useFormStatus();
   const [loading, setLoading] = useState(false);
+  const [address, setAddress] = useState("");
 
   const router = useRouter();
   const modal = useModal();
@@ -92,15 +93,19 @@ export default function CreatePlaceModal({
     if (selected) {
       form.setValue("address1", selected.formatted_address);
     }
+  }
 
-    // setSelected(selected);
+  function onAddressChange(str: string) {
+    form.setValue("address1", str);
+
+    setAddress(str);
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full space-y-6 rounded-md bg-gray-200/80 px-12 py-6 backdrop-blur-lg  dark:bg-gray-900/80 md:max-w-md md:border md:border-gray-200 md:shadow dark:md:border-gray-700"
+        className="w-full space-y-6 rounded-md bg-gray-200/80 px-12 py-6 backdrop-blur-lg  md:max-w-md md:border md:border-gray-200 md:shadow dark:bg-gray-900/80 dark:md:border-gray-700"
       >
         <FormTitle>Add a Place</FormTitle>
 
@@ -122,7 +127,10 @@ export default function CreatePlaceModal({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Address</FormLabel>
-              <GeocodeInput onSelected={onSelected} />
+              <GeocodeInput
+                onSelected={onSelected}
+                onChange={onAddressChange}
+              />
               <FormMessage />
             </FormItem>
           )}

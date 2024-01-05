@@ -1,8 +1,6 @@
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-import Event from "@/components/event-page";
-import { getEventRolesAndUsers, getEventTicketTiers } from "@/lib/actions";
 import { AttendeeTableCard } from "@/components/data-tables/event/event-attendee-table";
 
 
