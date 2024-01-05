@@ -1,9 +1,7 @@
 import CreatePlaceModal from "@/components/modal/create-place-form";
 import OpenModalButton from "@/components/open-modal-button";
 import DashboardHeader from "@/components/dashboard-header";
-import { Button } from "@/components/ui/button";
 import { getSession } from "@/lib/auth";
-import Link from "next/link";
 import prisma from "@/lib/prisma";
 import NotFoundCity from "../not-found";
 import HousingNav from "./nav";
