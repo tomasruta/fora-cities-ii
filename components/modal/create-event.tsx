@@ -139,7 +139,7 @@ export default function CreateEventModal({
   return (
     <form
       onSubmit={onSubmit}
-      className="mx-auto w-full rounded-md bg-white pt-10 md:max-w-md md:border md:border-gray-200 md:pt-0 md:shadow dark:bg-gray-900 dark:md:border-gray-700"
+      className="mx-auto w-full rounded-md bg-white pt-10 md:max-w-lg md:border md:border-gray-200 md:pt-0 md:shadow dark:bg-gray-900 dark:md:border-gray-700"
     >
       <div className="md:p-10 relative flex flex-col space-y-4 p-5">
         <h2 className="font-cal text-2xl dark:text-white">

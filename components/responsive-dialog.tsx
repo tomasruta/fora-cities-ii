@@ -43,7 +43,7 @@ export default function ResponsiveDialog({
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{Trigger}</DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px p-0 w-full">
           {title ? (
             <DialogHeader>
               {title && <DialogTitle>{title}</DialogTitle>}
