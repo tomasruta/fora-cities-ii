@@ -67,6 +67,12 @@ export default async function EventSubEvents({
     },
   });
 
+  const orgPlaces = await prisma.place.findMany({
+    where: {
+      organizationId: org.id
+    }
+  })
+
   if (!subevents && !userIsHost) {
     return <div />;
   }
@@ -85,7 +91,7 @@ export default async function EventSubEvents({
           >
             <CreateEventModal
               organization={org}
-              places={places}
+              places={orgPlaces}
               parentEvent={event}
               redirectBaseUrl={"/"}
             />
