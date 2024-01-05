@@ -1,7 +1,7 @@
 import { getSession } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { ReactNode } from "react";
-import { getUserOrgRolesBySubdomain } from "@/lib/actions";
+import { getUserOrgRolesBySubdomainOrId } from "@/lib/actions";
 import NotFoundCity from "./not-found";
 
 export default async function CityLayout({
@@ -17,7 +17,7 @@ export default async function CityLayout({
     return notFound();
   }
 
-  const orgRoles = await getUserOrgRolesBySubdomain({
+  const orgRoles = await getUserOrgRolesBySubdomainOrId({
     userId: session.user.id,
     orgIdOrSubdomain: params.subdomain,
   });

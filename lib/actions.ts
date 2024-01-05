@@ -212,7 +212,7 @@ export async function userHasOrgRole(
   return userRoles.length > 0;
 }
 
-export async function getUserOrgRolesBySubdomain({
+export async function getUserOrgRolesBySubdomainOrId({
   userId,
   orgIdOrSubdomain,
 }: {
@@ -314,6 +314,27 @@ export async function getUserEventRoles(userId: string, eventId: string) {
   return userRoles;
 }
 
+export async function getUserEventTickets(params: {
+  userId: string;
+  eventId: string;
+}) {
+  const userRoles = await prisma.ticket.findMany({
+    where: {
+      userId: params.userId,
+      eventId: params.eventId,
+    },
+    include: {
+      tier: {
+        include: {
+          role: true,
+        },
+      },
+    },
+  });
+
+  return userRoles;
+}
+
 export async function userHasEventRole(
   userId: string,
   eventId: string,
@@ -333,6 +354,7 @@ export const createEvent = async (input: {
   startingAt: Date;
   endingAt: Date;
   placeId?: string;
+  parentEvent?: Event;
 }) => {
   const session = await getSession();
   if (!session?.user.id) {
@@ -348,11 +370,39 @@ export const createEvent = async (input: {
   const startingAt = input.startingAt;
   const endingAt = input.endingAt;
 
-  const hasAdminRole = await userHasOrgRole(
-    session.user.id,
-    organizationId,
-    "Admin",
-  );
+  const userOrgRoles = await getUserOrgRolesBySubdomainOrId({
+    userId: session.user.id,
+    orgIdOrSubdomain: organizationId,
+  });
+
+  // TODO:// Role Validations
+  if (!input.parentEvent) {
+    if (userOrgRoles.length === 0) {
+      return {
+        error: "You must have a role in this organization to create an event.",
+      };
+    }
+  }
+
+  if (input.parentEvent) {
+    const [userEventRoles, userEventTickets] = await Promise.all([
+      getUserEventRoles(session.user.id, input.parentEvent.id),
+      getUserEventTickets({
+        userId: session.user.id,
+        eventId: input.parentEvent.id,
+      }),
+    ]);
+    if (
+      userOrgRoles.length === 0 &&
+      userEventRoles.length === 0 &&
+      userEventTickets.length === 0
+    ) {
+      return {
+        error:
+          "You must have a ticekt, role in this event or role in this organization to create a sub event.",
+      };
+    }
+  }
 
   if (input.placeId) {
     const placeIsAvailable = await isTimeSlotAvailable(
@@ -366,6 +416,8 @@ export const createEvent = async (input: {
       };
     }
   }
+
+  const parentId = input?.parentEvent ? input.parentEvent.id : undefined;
 
   try {
     const [event, role] = await prisma.$transaction([
@@ -381,6 +433,13 @@ export const createEvent = async (input: {
               id: organizationId,
             },
           },
+          parent: parentId
+            ? {
+                connect: {
+                  id: parentId,
+                },
+              }
+            : undefined,
         },
       }),
       prisma.role.create({

@@ -36,10 +36,10 @@ import HeaderMainTitle from "./site-layouts/social-media/header-main-title";
 import HeaderMainDescription from "./site-layouts/social-media/header-main-description";
 import { LineGradient } from "./line-gradient";
 import { Button } from "./ui/button";
-import { getSession } from "@/lib/auth";
 import { Session } from "next-auth";
 import { format } from "date-fns";
 import { EventHost } from "./event-list";
+import EventSubEvents from "./event-sub-events";
 
 function CalendarView({ startingAt }: { startingAt: Date }) {
   return (
@@ -340,8 +340,14 @@ export default function EventPage({
           </div>
         </div>
         <div className="mx-auto grid w-full grid-cols-1 md:gap-6 lg:grid-cols-3">
-          <div className="col-span-1 mx-auto flex w-full flex-col space-y-6 lg:col-span-2">
+          <div className="col-span-1 mx-auto flex w-full flex-col lg:col-span-2">
             <AboutCard event={event} />
+            <EventSubEvents
+              event={event}
+              org={event.organization}
+              places={event.eventPlaces.map(({ place }) => place)}
+              userIsHost={userIsHost}
+            />
           </div>
           {/* <RegistrationCard event={event} ticketTiers={ticketTiers} /> */}
           <div className="col-span-1 space-y-6">
@@ -356,6 +362,7 @@ export default function EventPage({
     </>
   );
 }
+
 
 function EventPageOrganization({ org }: { org: Organization }) {
   return (

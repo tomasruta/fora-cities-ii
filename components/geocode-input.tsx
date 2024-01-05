@@ -74,7 +74,9 @@ export const GeocodeInput = ({
         onChange={(e) => {
           setSelected(undefined);
           setAddress(e.target.value);
-          onChange(e.target.value);
+          if (onChange) {
+            onChange(e.target.value);
+          }
         }}
       />
       {!selected && (

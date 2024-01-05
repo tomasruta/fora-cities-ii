@@ -3,9 +3,13 @@ import Image from "next/image";
 import EventListItem from "./event-list-item";
 import { Event } from "@prisma/client";
 import { getSiteData } from "@/lib/fetchers";
+import CreateEventModal from "./modal/create-event";
+import { Button } from "./ui/button";
+import OpenModalButton from "./open-modal-button";
+import { getSubdomainFromDomain } from "@/lib/utils";
 
 export type EventFeedEvent = Event & {
-  organization: { subdomain: string | null, image: string | null };
+  organization: { subdomain: string | null; image: string | null };
   eventRole: {
     role: {
       id: string;
@@ -45,17 +49,29 @@ export default async function EventList({
 }: {
   domain: string;
   limit?: number;
-  upcoming?: boolean
+  upcoming?: boolean;
 }) {
-  const organization = await getSiteData(domain);
+  const [organization, places] = await Promise.all([
+    getSiteData(domain),
+    prisma.place.findMany({
+      where: {
+        organization: {
+          subdomain: getSubdomainFromDomain(domain),
+        },
+      },
+    }),
+  ]);
+
   if (!organization) {
-    return;
+    return null;
   }
   const organizationId = organization.id;
   const events = await prisma.event.findMany({
     where: {
       organizationId: organizationId,
-      ...(upcoming !== undefined ? { startingAt: { [upcoming ? 'gt' : 'lt']: new Date() } } : {}),
+      ...(upcoming !== undefined
+        ? { startingAt: { [upcoming ? "gt" : "lt"]: new Date() } }
+        : {}),
     },
     include: {
       //   organization: {},
@@ -101,7 +117,12 @@ export default async function EventList({
       {events.map((event) => {
         const href = `/${event.path}`;
 
-        return <EventListItem href={href} key={event.id} event={event} />;
+        return (
+          <div key={event.id} className="flex w-full flex-col items-start">
+            <EventListItem href={href} event={event} />
+
+          </div>
+        );
       })}
     </div>
   ) : (

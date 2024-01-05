@@ -2,8 +2,10 @@
 
 import { useModal } from "@/components/modal/provider";
 import { ReactNode } from "react";
+import { Button, ButtonProps } from "./ui/button";
+import { cn } from "@/lib/utils";
 
-interface OpenModalButtonProps {
+interface OpenModalButtonProps extends ButtonProps {
   children: ReactNode;
   text: string;
   className?: string;
@@ -13,14 +15,12 @@ export default function OpenModalButton({
   children,
   text,
   className = "",
+  ...rest
 }: OpenModalButtonProps) {
   const modal = useModal();
   return (
-    <button
-      onClick={() => modal?.show(children)}
-      className={`rounded-lg border border-gray-800 bg-gray-800 px-4 py-1.5 text-sm font-medium text-gray-100 transition-all hover:bg-gray-100 hover:text-gray-800 active:bg-gray-100 dark:border-gray-700 dark:hover:border-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-100 dark:active:bg-gray-800 ${className}`}
-    >
+    <Button onClick={() => modal?.show(children)} className={cn(className)} {...rest}>
       {text}
-    </button>
+    </Button>
   );
 }

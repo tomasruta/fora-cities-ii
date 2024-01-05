@@ -64,7 +64,6 @@ export default async function SiteEventPage({
     getEventTicketTiers(event.id),
   ]);
 
-
   return (
     <div className="px-4 pb-20 pt-4">
       <Event

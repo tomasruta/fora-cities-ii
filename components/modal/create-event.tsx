@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { createEvent } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
-import { Organization, Place } from "@prisma/client";
+import { Event, Organization, Place } from "@prisma/client";
 import FormButton from "./form-button";
 import { DatePicker } from "../form-builder/date-picker";
 import TimePicker from "../ui/time-picker";
@@ -16,14 +16,7 @@ import {
   SelectContent,
   SelectItem,
 } from "../ui/select";
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-} from "../ui/form";
+import { revalidatePath } from "next/cache";
 
 export function combineDateAndTime(date: Date, timeInMs: string) {
   const timeElapsed = parseInt(timeInMs);
@@ -50,13 +43,16 @@ export function combineDateAndTime(date: Date, timeInMs: string) {
 export default function CreateEventModal({
   organization,
   places,
+  parentEvent,
   redirectBaseUrl,
 }: {
   organization: Organization;
   places: Place[];
+  parentEvent?: Event;
   redirectBaseUrl?: string;
 }) {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   // const modal = useModal();
 
   const [data, setData] = useState<{
@@ -93,6 +89,7 @@ export default function CreateEventModal({
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const startingAt =
       data.startingAtDate && data.startingAtTime
         ? combineDateAndTime(data.startingAtDate, data.startingAtTime)
@@ -115,20 +112,28 @@ export default function CreateEventModal({
       organizationId: organization.id,
       startingAt,
       endingAt,
-      placeId, 
+      placeId,
+      parentEvent,
     }).then((res: any) => {
+      setLoading(false);
       if (res.error) {
         toast.error(res.error);
       } else {
         const { imageBlurhash, createdAt, updatedAt, ...org } = organization;
         toast.success(`Successfully created Event!`);
+        if (parentEvent) {
+          revalidatePath(`/${parentEvent.path}`)
+        }
         router.push(
           redirectBaseUrl
             ? `${redirectBaseUrl}${res.path}`
             : `/city/${organization.subdomain}/events/${res.path}`,
         );
       }
-    });
+    }).catch(e => {
+      console.error(e)
+      setLoading(false);
+    })
   };
 
   return (
@@ -136,9 +141,11 @@ export default function CreateEventModal({
       onSubmit={onSubmit}
       className="mx-auto w-full rounded-md bg-white pt-10 md:max-w-md md:border md:border-gray-200 md:pt-0 md:shadow dark:bg-gray-900 dark:md:border-gray-700"
     >
-      <div className="m.d:p-10 relative flex flex-col space-y-4 p-5">
+      <div className="md:p-10 relative flex flex-col space-y-4 p-5">
         <h2 className="font-cal text-2xl dark:text-white">
-          Create a new event
+          {parentEvent
+            ? `Create a sub event for ${parentEvent.name}`
+            : "Create a new event"}
         </h2>
 
         <div className="flex flex-col space-y-2">
@@ -268,7 +275,7 @@ export default function CreateEventModal({
         </div>
       </div>
       <div className="flex items-center justify-end rounded-b-lg border-t border-gray-200 bg-gray-50 p-3 md:px-10 dark:border-gray-700 dark:bg-gray-800">
-        <FormButton text={"Create Event"} />
+        <FormButton loading={loading} text={"Create Event"} />
       </div>
     </form>
   );
