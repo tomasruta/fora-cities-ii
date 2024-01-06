@@ -181,7 +181,7 @@ export function HostedByInline({ users }: { users: EventHost[] }) {
         })}
       </div>
       <span className="ml-2 md:ml-2 mr-1">By </span>
-      <div className="flex space-x-1">
+      <div className="flex space-x-1 flex-wrap">
         {users.map((hostUser, index) => (
           <span key={hostUser.id}>
             {hostUser.name}
