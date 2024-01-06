@@ -1,9 +1,12 @@
+"use client";
 import Link from "next/link";
-import { format } from "date-fns";
 import EventListItemImage from "./event-list-item-image";
 import { EventFeedEvent, uniqueHosts } from "./event-list";
 import { HostedByInline } from "./event-page";
-import { formatInTimeZone, utcToZonedTime } from "date-fns-tz";
+import {
+  EventListItemDate,
+  EventListItemTime,
+} from "./event-list-item-datetime";
 
 export default function EventListItem({
   event,
@@ -17,31 +20,20 @@ export default function EventListItem({
   if (!event.startingAt) {
     return null;
   }
-  const url = `${event.organization.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/events/${event.path}`;
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const zonedDate = utcToZonedTime(event.startingAt, timeZone);
-  console.log('zonedDate', zonedDate)
-  console.log('startingAt', event.startingAt)
+  // const url = `${event.organization.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/events/${event.path}`;
   const hosts = uniqueHosts(event);
   return (
     <div className="w-full">
-      <div className="mb-3 space-x-2">
-        <span className="text-lg font-semibold tracking-tight text-gray-900 dark:text-gray-100">
-          {format(zonedDate, "MMM d, yyyy")}
-        </span>
-        <span className="font-medium text-gray-750 dark:text-gray-250">
-          {format(zonedDate, "EEEE")}
-        </span>
-      </div>
+      <EventListItemDate startingAt={event.startingAt} />
       <Link
         href={
           href || `/city/${event.organization.subdomain}/events/${event.path}`
         }
       >
         <div className="relative flex  rounded-2xl border border-gray-200 shadow-md  transition-all hover:shadow-xl md:flex-row dark:border-gray-700 dark:hover:border-white">
-          <div className="flex flex-col flex-1 border-gray-200 text-wrap  py-3 pl-3 dark:border-gray-700">
-            <span className="text-sm">{formatInTimeZone(zonedDate, timeZone, "h:mm a")}</span>
-            <h3 className="mb-2 text-md md:text-lg font-medium tracking-wide text-gray-800 dark:text-gray-200">
+          <div className="flex flex-1 flex-col text-wrap border-gray-200  py-3 pl-3 dark:border-gray-700">
+            <EventListItemTime startingAt={event.startingAt} />
+            <h3 className="text-md mb-2 font-medium tracking-wide text-gray-800 md:text-lg dark:text-gray-200">
               {event.name}
             </h3>
 

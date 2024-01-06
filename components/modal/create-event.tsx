@@ -121,10 +121,11 @@ export default function CreateEventModal({
       } else {
         const { imageBlurhash, createdAt, updatedAt, ...org } = organization;
         toast.success(`Successfully created Event!`);
+        revalidatePath(`/`, 'page')
         if (parentEvent) {
           revalidatePath(`/${parentEvent.path}`)
-          router.refresh();
         }
+        router.refresh();
         router.push(
           redirectBaseUrl
             ? `${redirectBaseUrl}${res.path}`

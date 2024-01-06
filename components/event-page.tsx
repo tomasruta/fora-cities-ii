@@ -1,4 +1,4 @@
-import { cn, placeholderBlurhash } from "@/lib/utils";
+import { placeholderBlurhash } from "@/lib/utils";
 import {
   Event,
   EventPlace,
@@ -9,39 +9,29 @@ import {
   User,
   UserRole,
 } from "@prisma/client";
-import Image from "next/image";
 import { useMemo } from "react";
-import {
-  convertNameToTwoLetters,
-  getTwoLetterPlaceholder,
-  getUsername,
-} from "@/lib/profile";
+import { getTwoLetterPlaceholder } from "@/lib/profile";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { RegistrationCardItems } from "./registration-card-items";
-import { ExternalLink, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import BannerImage from "./site-layouts/social-media/banner-image";
-import SocialHeaderMain from "./site-layouts/social-media/social-header-main";
 import HeaderMainTitle from "./site-layouts/social-media/header-main-title";
 import HeaderMainDescription from "./site-layouts/social-media/header-main-description";
 import { LineGradient } from "./line-gradient";
 import { Button } from "./ui/button";
-import { getSession } from "@/lib/auth";
 import { Session } from "next-auth";
 import { format } from "date-fns";
 import { EventHost } from "./event-list";
 import EventSubEvents from "./event-sub-events";
-import { formatInTimeZone, utcToZonedTime } from "date-fns-tz";
+import EventPageTimeDisplay from "./event-page-time-display";
 
 function CalendarView({ startingAt }: { startingAt: Date }) {
   return (
@@ -51,34 +41,6 @@ function CalendarView({ startingAt }: { startingAt: Date }) {
       </div>
       <div className="md:text-md text-md flex flex-1 items-center justify-center px-2 text-center font-bold md:px-4">
         {format(startingAt, "d")}
-      </div>
-    </div>
-  );
-}
-
-function TimeDisplay({
-  startingAt,
-  endingAt,
-}: {
-  startingAt: Date;
-  endingAt: Date;
-}) {
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const zonedStartingAtDate = utcToZonedTime(startingAt, timeZone);
-  const zonedEndingAtDate = utcToZonedTime(startingAt, timeZone);
-  console.log("zonedStartingAtDate", zonedStartingAtDate);
-  console.log("zonedEndingAtDate", zonedEndingAtDate);
-
-  return (
-    <div className="my-0">
-      <div className="space-x-2">
-        <span className="text-md font-semibold tracking-tight text-gray-900 lg:text-lg dark:text-gray-100">
-          {formatInTimeZone(zonedStartingAtDate, timeZone, "EEEE, MMMM d, yyyy")}
-        </span>
-      </div>
-      <div className="lg:text-md text-sm font-medium text-gray-750 dark:text-gray-250">
-        {formatInTimeZone(zonedEndingAtDate, timeZone, "h:mm a")} to{" "}
-        {formatInTimeZone(zonedEndingAtDate, timeZone, "MMM d, h:mm a zzz")}{" "}
       </div>
     </div>
   );
@@ -172,7 +134,12 @@ export function HostedByInline({ users }: { users: EventHost[] }) {
         {users.map((hostUser) => {
           if (hostUser.image) {
             return (
-              <Avatar className={"h-8 w-8 md:h-9 md:w-9 border border-gray-500 dark:border-gray-400"} key={hostUser.id}>
+              <Avatar
+                className={
+                  "h-8 w-8 border border-gray-500 md:h-9 md:w-9 dark:border-gray-400"
+                }
+                key={hostUser.id}
+              >
                 <AvatarImage src={hostUser.image} />
               </Avatar>
             );
@@ -180,8 +147,8 @@ export function HostedByInline({ users }: { users: EventHost[] }) {
           return null;
         })}
       </div>
-      <span className="ml-2 md:ml-2 mr-1">By </span>
-      <div className="flex space-x-1 flex-wrap">
+      <span className="ml-2 mr-1 md:ml-2">By </span>
+      <div className="flex flex-wrap space-x-1">
         {users.map((hostUser, index) => (
           <span key={hostUser.id}>
             {hostUser.name}
@@ -324,7 +291,7 @@ export default function EventPage({
               {event.startingAt && event.endingAt && (
                 <div className="flex flex-1 space-x-4">
                   <CalendarView startingAt={event.startingAt} />
-                  <TimeDisplay
+                  <EventPageTimeDisplay
                     startingAt={event.startingAt}
                     endingAt={event.endingAt}
                   />
