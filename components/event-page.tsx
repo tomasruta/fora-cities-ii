@@ -41,7 +41,7 @@ import { Session } from "next-auth";
 import { format } from "date-fns";
 import { EventHost } from "./event-list";
 import EventSubEvents from "./event-sub-events";
-import { utcToZonedTime } from "date-fns-tz";
+import { formatInTimeZone, utcToZonedTime } from "date-fns-tz";
 
 function CalendarView({ startingAt }: { startingAt: Date }) {
   return (
@@ -73,12 +73,12 @@ function TimeDisplay({
     <div className="my-0">
       <div className="space-x-2">
         <span className="text-md font-semibold tracking-tight text-gray-900 lg:text-lg dark:text-gray-100">
-          {format(zonedStartingAtDate, "EEEE, MMMM d, yyyy")}
+          {formatInTimeZone(zonedStartingAtDate, timeZone, "EEEE, MMMM d, yyyy")}
         </span>
       </div>
       <div className="lg:text-md text-sm font-medium text-gray-750 dark:text-gray-250">
-        {format(zonedEndingAtDate, "h:mm a")} to{" "}
-        {format(endingAt, "MMM d, h:mm a")}{" "}
+        {formatInTimeZone(zonedEndingAtDate, timeZone, "h:mm a")} to{" "}
+        {formatInTimeZone(zonedEndingAtDate, timeZone, "MMM d, h:mm a zzz")}{" "}
       </div>
     </div>
   );
