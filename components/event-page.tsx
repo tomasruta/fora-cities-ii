@@ -41,6 +41,7 @@ import { Session } from "next-auth";
 import { format } from "date-fns";
 import { EventHost } from "./event-list";
 import EventSubEvents from "./event-sub-events";
+import { utcToZonedTime } from "date-fns-tz";
 
 function CalendarView({ startingAt }: { startingAt: Date }) {
   return (
@@ -62,15 +63,21 @@ function TimeDisplay({
   startingAt: Date;
   endingAt: Date;
 }) {
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const zonedStartingAtDate = utcToZonedTime(startingAt, timeZone);
+  const zonedEndingAtDate = utcToZonedTime(startingAt, timeZone);
+  console.log("zonedStartingAtDate", zonedStartingAtDate);
+  console.log("zonedEndingAtDate", zonedEndingAtDate);
+
   return (
     <div className="my-0">
       <div className="space-x-2">
         <span className="text-md font-semibold tracking-tight text-gray-900 lg:text-lg dark:text-gray-100">
-          {format(startingAt, "EEEE, MMMM d, yyyy")}
+          {format(zonedStartingAtDate, "EEEE, MMMM d, yyyy")}
         </span>
       </div>
       <div className="lg:text-md text-sm font-medium text-gray-750 dark:text-gray-250">
-        {format(startingAt, "h:mm a")} to {format(endingAt, "MMM d, h:mm a")}{" "}
+        {format(zonedEndingAtDate, "h:mm a")} to {format(endingAt, "MMM d, h:mm a")}{" "}
       </div>
     </div>
   );
@@ -363,7 +370,6 @@ export default function EventPage({
     </>
   );
 }
-
 
 function EventPageOrganization({ org }: { org: Organization }) {
   return (

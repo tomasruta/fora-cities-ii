@@ -23,7 +23,7 @@ export default function SiteEvents({ params }: { params: { domain: string } }) {
       </PagePadding>
 
       <Suspense>
-        <EventList domain={params.domain} />
+        <EventList domain={params.domain} upcoming />
       </Suspense>
     </div>
   );

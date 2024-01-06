@@ -123,6 +123,7 @@ export default function CreateEventModal({
         toast.success(`Successfully created Event!`);
         if (parentEvent) {
           revalidatePath(`/${parentEvent.path}`)
+          router.refresh();
         }
         router.push(
           redirectBaseUrl
