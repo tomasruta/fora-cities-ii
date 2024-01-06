@@ -10,7 +10,7 @@ export default function EventsFeed({
       <h4 className="mx-5 mb-3 mt-3 font-bold tracking-tight text-gray-750 dark:text-gray-400 md:my-5 md:text-lg ">
         {"Events"}
       </h4>
-      <EventList domain={domain} />
+      <EventList domain={domain} upcoming />
     </div>
   );
 }
