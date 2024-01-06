@@ -65,7 +65,7 @@ export default async function SiteEventPage({
   ]);
 
   return (
-    <div className="pb-20 pt-4">
+    <div className="pb-20">
       <Event
         event={event}
         rolesAndUsers={rolesAndUsers}

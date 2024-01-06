@@ -1,4 +1,4 @@
-import { placeholderBlurhash } from "@/lib/utils";
+import { cn, placeholderBlurhash } from "@/lib/utils";
 import {
   Event,
   EventPlace,
@@ -41,7 +41,7 @@ import { Session } from "next-auth";
 import { format } from "date-fns";
 import { EventHost } from "./event-list";
 import EventSubEvents from "./event-sub-events";
-import { utcToZonedTime } from "date-fns-tz";
+import { formatInTimeZone, utcToZonedTime } from "date-fns-tz";
 
 function CalendarView({ startingAt }: { startingAt: Date }) {
   return (
@@ -73,11 +73,12 @@ function TimeDisplay({
     <div className="my-0">
       <div className="space-x-2">
         <span className="text-md font-semibold tracking-tight text-gray-900 lg:text-lg dark:text-gray-100">
-          {format(zonedStartingAtDate, "EEEE, MMMM d, yyyy")}
+          {formatInTimeZone(zonedStartingAtDate, timeZone, "EEEE, MMMM d, yyyy")}
         </span>
       </div>
       <div className="lg:text-md text-sm font-medium text-gray-750 dark:text-gray-250">
-        {format(zonedEndingAtDate, "h:mm a")} to {format(endingAt, "MMM d, h:mm a")}{" "}
+        {formatInTimeZone(zonedEndingAtDate, timeZone, "h:mm a")} to{" "}
+        {formatInTimeZone(zonedEndingAtDate, timeZone, "MMM d, h:mm a zzz")}{" "}
       </div>
     </div>
   );
@@ -166,12 +167,12 @@ export function HostsCard({
 
 export function HostedByInline({ users }: { users: EventHost[] }) {
   return (
-    <div className="flex items-center">
+    <div className={"md:text-md flex items-center text-sm font-medium"}>
       <div className="flex -space-x-2">
-        {users.map((hostUser, index) => {
+        {users.map((hostUser) => {
           if (hostUser.image) {
             return (
-              <Avatar key={hostUser.id}>
+              <Avatar className={"h-8 w-8 md:h-9 md:w-9 border border-gray-500 dark:border-gray-400"} key={hostUser.id}>
                 <AvatarImage src={hostUser.image} />
               </Avatar>
             );
@@ -179,8 +180,8 @@ export function HostedByInline({ users }: { users: EventHost[] }) {
           return null;
         })}
       </div>
-      <span className="mx-1.5">By </span>
-      <div className="flex space-x-1">
+      <span className="ml-2 md:ml-2 mr-1">By </span>
+      <div className="flex space-x-1 flex-wrap">
         {users.map((hostUser, index) => (
           <span key={hostUser.id}>
             {hostUser.name}

@@ -275,8 +275,8 @@ export default function CreateEventModal({
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end rounded-b-lg border-t border-gray-200 bg-gray-50 p-3 md:px-10 dark:border-gray-700 dark:bg-gray-800">
-        <FormButton loading={loading} text={"Create Event"} />
+      <div className="w-full md:w-auto flex items-center justify-end rounded-b-lg border-t border-gray-200 bg-gray-50 px-4 py-3 md:px-10 dark:border-gray-700 dark:bg-gray-800">
+        <FormButton loading={loading} text={"Create Event"} className="w-full md:w-auto" />
       </div>
     </form>
   );
