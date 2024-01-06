@@ -8,6 +8,9 @@ import { placeholderBlurhash } from "@/lib/utils";
 import { Organization, Event } from "@prisma/client";
 import SocialLandingPage from "@/components/site-layouts/social-media/social-landing-page";
 
+
+export const dynamic = 'force-dynamic'
+
 export default async function SiteHomePage({
   params,
 }: {
