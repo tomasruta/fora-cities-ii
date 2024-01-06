@@ -39,9 +39,9 @@ export default function EventListItem({
         }
       >
         <div className="relative flex  rounded-2xl border border-gray-200 shadow-md  transition-all hover:shadow-xl md:flex-row dark:border-gray-700 dark:hover:border-white">
-          <div className="flex-1 border-gray-200 p-3 dark:border-gray-700">
+          <div className="flex flex-col flex-1 border-gray-200 text-wrap  py-3 pl-3 dark:border-gray-700">
             <span className="text-sm">{format(zonedDate, "h:mm a")}</span>
-            <h3 className="mb-2 truncate text-lg font-medium tracking-wide text-gray-800 dark:text-gray-200">
+            <h3 className="mb-2 text-md md:text-lg font-medium tracking-wide text-gray-800 dark:text-gray-200">
               {event.name}
             </h3>
 

@@ -1,4 +1,4 @@
-import { placeholderBlurhash } from "@/lib/utils";
+import { cn, placeholderBlurhash } from "@/lib/utils";
 import {
   Event,
   EventPlace,
@@ -77,7 +77,8 @@ function TimeDisplay({
         </span>
       </div>
       <div className="lg:text-md text-sm font-medium text-gray-750 dark:text-gray-250">
-        {format(zonedEndingAtDate, "h:mm a")} to {format(endingAt, "MMM d, h:mm a")}{" "}
+        {format(zonedEndingAtDate, "h:mm a")} to{" "}
+        {format(endingAt, "MMM d, h:mm a")}{" "}
       </div>
     </div>
   );
@@ -166,12 +167,12 @@ export function HostsCard({
 
 export function HostedByInline({ users }: { users: EventHost[] }) {
   return (
-    <div className="flex items-center">
+    <div className={"md:text-md flex items-center text-sm font-medium"}>
       <div className="flex -space-x-2">
-        {users.map((hostUser, index) => {
+        {users.map((hostUser) => {
           if (hostUser.image) {
             return (
-              <Avatar key={hostUser.id}>
+              <Avatar className={"h-8 w-8 md:h-9 md:w-9 border border-gray-500 dark:border-gray-400"} key={hostUser.id}>
                 <AvatarImage src={hostUser.image} />
               </Avatar>
             );
@@ -179,7 +180,7 @@ export function HostedByInline({ users }: { users: EventHost[] }) {
           return null;
         })}
       </div>
-      <span className="mx-1.5">By </span>
+      <span className="ml-2 md:ml-2 mr-1">By </span>
       <div className="flex space-x-1">
         {users.map((hostUser, index) => (
           <span key={hostUser.id}>
