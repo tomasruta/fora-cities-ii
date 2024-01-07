@@ -20,7 +20,7 @@ export default function EventPageTimeDisplay({
         </span>
       </div>
       <div className="lg:text-md text-sm font-medium text-gray-750 dark:text-gray-250">
-        {formatInTimeZone(zonedEndingAtDate, timeZone, "h:mm a")} to{" "}
+        {formatInTimeZone(zonedStartingAtDate, timeZone, "h:mm a")} to{" "}
         {formatInTimeZone(zonedEndingAtDate, timeZone, "MMM d, h:mm a zzz")}{" "}
       </div>
     </div>
