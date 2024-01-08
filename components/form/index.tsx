@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import DomainStatus from "./domain-status";
 import DomainConfiguration from "./domain-configuration";
 import Uploader from "./uploader";
+import { Textarea } from "../ui/textarea";
 
 export default function Form({
   title,
@@ -126,9 +127,9 @@ export default function Form({
             )}
           </div>
         ) : inputAttrs.name === "description" ? (
-          <textarea
+          <Textarea
             {...inputAttrs}
-            rows={3}
+            rows={6}
             required
             className="w-full max-w-xl rounded-md border border-gray-300 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:placeholder-gray-700"
           />

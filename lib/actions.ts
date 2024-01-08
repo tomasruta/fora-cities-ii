@@ -18,7 +18,7 @@ import {
   ApplicationStatus,
   User,
 } from "@prisma/client";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import {
   withPostAuth,
   withOrganizationAuth,
@@ -1639,6 +1639,7 @@ export const updateEvent = withEventAuth(
         (await revalidateTag(
           `${event.organization.customDomain}/${event.path}-metadata`,
         ));
+      revalidatePath(`/${event.path}`, "layout");
 
       return response;
     } catch (error: any) {

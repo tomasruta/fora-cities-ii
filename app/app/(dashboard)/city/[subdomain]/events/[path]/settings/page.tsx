@@ -37,19 +37,19 @@ export default async function EventSettings({
         organization: {
           include: {
             places: true,
-          }
+          },
         },
         eventPlaces: {
           include: {
-            place: true
-          }
-        }
-      }
+            place: true,
+          },
+        },
+      },
     }),
   ]);
 
   if (!event) {
-    return NotFoundPost()
+    return NotFoundPost();
   }
 
   return (
@@ -68,20 +68,20 @@ export default async function EventSettings({
       <Form
         title="Name"
         description="The name of the event"
-        helpText="Please use 32 characters maximum."
+        helpText="Please use 64 characters maximum."
         inputAttrs={{
           name: "name",
           type: "text",
           defaultValue: event?.name!,
           placeholder: event?.name || "Your Event",
-          maxLength: 32,
+          maxLength: 64,
         }}
         handleSubmit={updateEvent}
       />
       <Form
         title="Description"
         description="Your description of the event."
-        helpText="Please use 32 characters maximum."
+        helpText="When you share a link to the event, your description will be the body text of the preview."
         inputAttrs={{
           name: "description",
           type: "text",
@@ -91,7 +91,11 @@ export default async function EventSettings({
         handleSubmit={updateEvent}
       />
 
-      <UpdateEventPlaceTimeForm event={event} organization={event?.organization} places={event?.organization.places} />
+      <UpdateEventPlaceTimeForm
+        event={event}
+        organization={event?.organization}
+        places={event?.organization.places}
+      />
 
       {event && <DeleteEventForm eventName={event?.name} />}
     </div>
