@@ -4,7 +4,7 @@ export default function HeaderMainDescription({
   children?: string;
 }) {
   return (
-    <p className="mb-3 max-w-lg font-medium tracking-[-0.02em] text-gray-800 dark:text-gray-350">
+    <p className="mb-3 whitespace-pre-line max-w-lg font-medium tracking-[-0.02em] text-gray-800 dark:text-gray-350">
       {children}
     </p>
   );

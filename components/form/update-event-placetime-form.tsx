@@ -158,7 +158,7 @@ export default function UpdateEventPlaceTimeForm({
     >
       <div className="relative flex flex-col space-y-4 p-5 sm:p-10">
         <h2 className="font-cal text-xl dark:text-white">
-          Update Location and Time
+          Location and Time
         </h2>
         <p className="text-sm text-gray-700 dark:text-gray-400">{""}</p>
 
