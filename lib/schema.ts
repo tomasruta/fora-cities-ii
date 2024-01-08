@@ -241,7 +241,7 @@ export const UpsertOrganizationLinkSchemas = z.object({
 const CampaignTierSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, { message: "Name is required." }),
-  description: z.string().optional(),
+  description: z.string().nullish().optional(),
   quantity: z.number().optional(),
   price: z.number().optional(),
   currency: z.string().nullish(),

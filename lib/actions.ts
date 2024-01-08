@@ -355,6 +355,11 @@ export const createEvent = async (input: {
   endingAt: Date;
   placeId?: string;
   parentEvent?: Event;
+  oneTimeLocation?: {
+    name: string,
+    address1: string,
+    address2?: string,
+  }
 }) => {
   const session = await getSession();
   if (!session?.user.id) {
@@ -402,6 +407,22 @@ export const createEvent = async (input: {
           "You must have a ticekt, role in this event or role in this organization to create a sub event.",
       };
     }
+  }
+
+
+  // If oneTimeLocation is provided, create a Place record
+  if (input.oneTimeLocation) {
+    const place = await prisma.place.create({
+      data: {
+        name: input.oneTimeLocation.name,
+        address1: input.oneTimeLocation.address1,
+        address2: input.oneTimeLocation.address2 || null,
+        // Add other necessary fields here...
+      },
+    });
+
+    // Use the created place's id for the event
+    input.placeId = place.id;
   }
 
   if (input.placeId) {

@@ -43,7 +43,7 @@ export default function ResponsiveDialog({
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{Trigger}</DialogTrigger>
-        <DialogContent className="sm:max-w-[425px p-0 w-full">
+        <DialogContent className="sm:max-w-[425px w-full p-0">
           {title ? (
             <DialogHeader>
               {title && <DialogTitle>{title}</DialogTitle>}
@@ -61,7 +61,7 @@ export default function ResponsiveDialog({
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{Trigger}</DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="flex flex-col flex-1 max-h-[100vh]">
         {title && (
           <DrawerHeader className="text-left">
             {title && <DrawerTitle>{title}</DrawerTitle>}
@@ -70,7 +70,8 @@ export default function ResponsiveDialog({
             ) : null}
           </DrawerHeader>
         )}
-        {children}
+        <div className="flex flex-1 flex-col overflow-y-scroll">{children}</div>
+
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>

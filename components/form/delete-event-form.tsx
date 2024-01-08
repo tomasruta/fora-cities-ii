@@ -34,23 +34,22 @@ export default function DeleteEventForm({ eventName }: { eventName: string }) {
     >
       <div className="relative flex flex-col space-y-4 p-5 sm:p-10">
         <h2 className="font-cal text-xl dark:text-gray-50">Delete Event</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Deletes your event and everything associated with it. I hope you know what you are doing. Type in the name
-          of the event, <b>{eventName}</b>, to confirm.
+        <p className="text-sm text-gray-750 dark:text-gray-300">
+          Deletes your event and everything associated with it. Type in <b>delete</b> to confirm.
         </p>
 
         <input
           name="confirm"
           type="text"
           required
-          pattern={eventName}
-          placeholder={eventName}
-          className="w-full max-w-md rounded-md border border-gray-300 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-50 dark:placeholder-gray-700"
+          pattern={"delete"}
+          placeholder={`delete`}
+          className="w-full max-w-md rounded-md border border-gray-300 text-sm text-gray-900 placeholder-gray-600 focus:border-gray-500 focus:outline-none focus:ring-gray-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-50 dark:placeholder-gray-500"
         />
       </div>
 
       <div className="flex flex-col items-center justify-center space-y-2 rounded-b-lg border-t border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800 sm:flex-row sm:justify-between sm:space-y-0 sm:px-10">
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-center text-sm text-gray-750 dark:text-gray-300">
           This action is irreversible. Please proceed with caution.
         </p>
         <div className="w-32">

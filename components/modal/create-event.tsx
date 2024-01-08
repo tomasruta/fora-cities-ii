@@ -3,7 +3,7 @@
 import { toast } from "sonner";
 import { createEvent } from "@/lib/actions";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, LabelHTMLAttributes, useEffect, useState } from "react";
 import { Event, Organization, Place } from "@prisma/client";
 import FormButton from "./form-button";
 import { DatePicker } from "../form-builder/date-picker";
@@ -17,6 +17,11 @@ import {
   SelectItem,
 } from "../ui/select";
 import { revalidatePath } from "next/cache";
+import { Building2Icon, PlusCircle } from "lucide-react";
+import { Button } from "../ui/button";
+import ResponsiveDialog from "../responsive-dialog";
+import CreatePlaceModal from "./create-place-form";
+import { Separator } from "../ui/separator";
 
 export function combineDateAndTime(date: Date, timeInMs: string) {
   const timeElapsed = parseInt(timeInMs);
@@ -40,6 +45,15 @@ export function combineDateAndTime(date: Date, timeInMs: string) {
   return combined;
 }
 
+const FormLabel = (props: LabelHTMLAttributes<HTMLLabelElement>) => {
+  return (
+    <label
+      className="text-sm font-medium text-gray-700 dark:text-gray-400"
+      {...props}
+    />
+  );
+};
+
 export default function CreateEventModal({
   organization,
   places,
@@ -53,7 +67,6 @@ export default function CreateEventModal({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  // const modal = useModal();
 
   const [data, setData] = useState<{
     name: string;
@@ -75,6 +88,18 @@ export default function CreateEventModal({
     endingAtTime: undefined,
 
     placeId: undefined,
+  });
+
+  const [addPlace, setAddPlace] = useState(false);
+
+  const [placeData, setPlaceData] = useState<{
+    name: string;
+    address1: string;
+    address2: string;
+  }>({
+    name: "",
+    address1: "",
+    address2: "",
   });
 
   useEffect(() => {
@@ -114,28 +139,31 @@ export default function CreateEventModal({
       endingAt,
       placeId,
       parentEvent,
-    }).then((res: any) => {
-      setLoading(false);
-      if (res.error) {
-        toast.error(res.error);
-      } else {
-        const { imageBlurhash, createdAt, updatedAt, ...org } = organization;
-        toast.success(`Successfully created Event!`);
-        revalidatePath(`/`, 'page')
-        if (parentEvent) {
-          revalidatePath(`/${parentEvent.path}`)
-        }
-        router.refresh();
-        router.push(
-          redirectBaseUrl
-            ? `${redirectBaseUrl}${res.path}`
-            : `/city/${organization.subdomain}/events/${res.path}`,
-        );
-      }
-    }).catch(e => {
-      console.error(e)
-      setLoading(false);
+      oneTimeLocation: addPlace ? placeData : undefined,
     })
+      .then((res: any) => {
+        setLoading(false);
+        if (res.error) {
+          toast.error(res.error);
+        } else {
+          const { imageBlurhash, createdAt, updatedAt, ...org } = organization;
+          toast.success(`Successfully created Event!`);
+          revalidatePath(`/`, "page");
+          if (parentEvent) {
+            revalidatePath(`/${parentEvent.path}`);
+          }
+          router.refresh();
+          router.push(
+            redirectBaseUrl
+              ? `${redirectBaseUrl}${res.path}`
+              : `/city/${organization.subdomain}/events/${res.path}`,
+          );
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        setLoading(false);
+      });
   };
 
   return (
@@ -143,7 +171,7 @@ export default function CreateEventModal({
       onSubmit={onSubmit}
       className="mx-auto w-full rounded-md bg-white pt-10 md:max-w-lg md:border md:border-gray-200 md:pt-0 md:shadow dark:bg-gray-900 dark:md:border-gray-700"
     >
-      <div className="md:p-10 relative flex flex-col space-y-4 p-5">
+      <div className="relative flex flex-col space-y-4 p-5 md:p-10">
         <h2 className="font-cal text-2xl dark:text-white">
           {parentEvent
             ? `Create a sub event for ${parentEvent.name}`
@@ -151,12 +179,7 @@ export default function CreateEventModal({
         </h2>
 
         <div className="flex flex-col space-y-2">
-          <label
-            htmlFor="name"
-            className="text-sm font-medium text-gray-700 dark:text-gray-400"
-          >
-            Name
-          </label>
+          <FormLabel htmlFor="name">Name</FormLabel>
           <Input
             name="name"
             type="text"
@@ -170,12 +193,7 @@ export default function CreateEventModal({
         </div>
 
         <div className="flex flex-col space-y-2">
-          <label
-            htmlFor="path"
-            className="text-sm font-medium text-gray-700 dark:text-gray-400"
-          >
-            Path
-          </label>
+          <FormLabel htmlFor="path">Path</FormLabel>
           <div className="flex w-full max-w-md">
             <div className="flex items-center rounded-r-lg border border-l-0 border-gray-200 bg-gray-100 px-3 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
               {organization.subdomain}.{process.env.NEXT_PUBLIC_ROOT_DOMAIN}/
@@ -195,12 +213,7 @@ export default function CreateEventModal({
         </div>
 
         <div className="flex flex-col space-y-2">
-          <label
-            htmlFor="description"
-            className="text-sm font-medium text-gray-700 dark:text-gray-400"
-          >
-            Description
-          </label>
+          <FormLabel htmlFor="description">Description</FormLabel>
           <textarea
             name="description"
             value={data.description}
@@ -212,34 +225,107 @@ export default function CreateEventModal({
         </div>
 
         <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-400">
-            Location
-          </label>
+          <FormLabel>Location</FormLabel>
 
-          <Select
-            onValueChange={(value) => {
-              setData((prev) => ({ ...prev, placeId: value }));
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select a location" />
-            </SelectTrigger>
-            <SelectContent>
-              {places.map((place) => {
-                return (
-                  <SelectItem key={place.id} value={place.id}>
-                    {place.name}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
+          {addPlace ? (
+            <Button
+              variant={"ghost"}
+              type="button"
+              onClick={() => {
+                setAddPlace(false);
+              }}
+            >
+              <div className="flex items-center">
+                <Building2Icon className="h-4 w-4 stroke-gray-800 dark:stroke-gray-300" />
+                <span className="mx-2.5">{`Use Venue Space`}</span>
+              </div>
+            </Button>
+          ) : (
+            <>
+              <Select
+                onValueChange={(value) => {
+                  setData((prev) => ({ ...prev, placeId: value }));
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {places.map((place) => {
+                    return (
+                      <SelectItem key={place.id} value={place.id}>
+                        {place.name}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+              <Button
+                variant={"ghost"}
+                type="button"
+                onClick={() => {
+                  setAddPlace(true);
+                }}
+              >
+                <div className="flex items-center">
+                  <PlusCircle className="h-4 w-4 stroke-gray-800 dark:stroke-gray-300" />
+                  <span className="mx-2.5">{`Use One-Time Location`}</span>
+                </div>
+              </Button>
+            </>
+          )}
         </div>
 
+        {addPlace ? (
+          <>
+            <div className="flex flex-col space-y-2">
+              <FormLabel>Location Name</FormLabel>
+              <Input
+                name="location_name"
+                type="text"
+                value={placeData.name}
+                onChange={(e) =>
+                  setPlaceData({ ...placeData, name: e.target.value })
+                }
+                maxLength={64}
+                required
+              />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <FormLabel>Location Address</FormLabel>
+              <Input
+                name="location_address1"
+                type="text"
+                value={placeData.address1}
+                onChange={(e) =>
+                  setPlaceData({ ...placeData, address1: e.target.value })
+                }
+                maxLength={64}
+                required
+              />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <FormLabel>Location Address 2</FormLabel>
+              <Input
+                name="location_address2"
+                type="text"
+                placeholder="Room, unit, number, etc."
+                value={placeData.address2}
+                onChange={(e) =>
+                  setPlaceData({ ...placeData, address2: e.target.value })
+                }
+                maxLength={32}
+                required
+              />
+            </div>
+            <Separator />
+          </>
+        ) : (
+          <Separator />
+        )}
+
         <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-400">
-            Starts At
-          </label>
+          <FormLabel>Starts At</FormLabel>
           <div className="flex">
             <DatePicker
               date={data.startingAtDate}
@@ -257,9 +343,7 @@ export default function CreateEventModal({
         </div>
 
         <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-400">
-            Ends At
-          </label>
+          <FormLabel>Ends At</FormLabel>
           <div className="flex">
             <DatePicker
               date={data.endingAtDate}
@@ -276,8 +360,12 @@ export default function CreateEventModal({
           </div>
         </div>
       </div>
-      <div className="w-full md:w-auto flex items-center justify-end rounded-b-lg border-t border-gray-200 bg-gray-50 px-4 py-3 md:px-10 dark:border-gray-700 dark:bg-gray-800">
-        <FormButton loading={loading} text={"Create Event"} className="w-full md:w-auto" />
+      <div className="flex w-full items-center justify-end rounded-b-lg border-t border-gray-200 bg-gray-50 px-4 py-3 md:w-auto md:px-10 dark:border-gray-700 dark:bg-gray-800">
+        <FormButton
+          loading={loading}
+          text={"Create Event"}
+          className="w-full md:w-auto"
+        />
       </div>
     </form>
   );
