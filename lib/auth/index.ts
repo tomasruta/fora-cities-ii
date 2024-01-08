@@ -270,7 +270,6 @@ export function withEventAuth(action: any) {
     context: { params: { subdomain: string; path: string } },
     key: string | null,
   ) => {
-    console.log('context: ', context)
 
     const session = await getSession();
     if (!session) {
@@ -287,6 +286,11 @@ export function withEventAuth(action: any) {
       },
       include: {
         organization: true,
+        eventPlaces: {
+          include: {
+            place: true
+          }
+        }
       },
     });
     console.log('eventData:', data)

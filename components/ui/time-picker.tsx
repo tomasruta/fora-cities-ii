@@ -8,7 +8,9 @@ import {
 } from "@/components/ui/select";
 import { SelectProps } from "@radix-ui/react-select";
 
-interface TimePickerProps extends SelectProps {}
+interface TimePickerProps extends SelectProps {
+}
+
 
 export default function TimePicker(props: TimePickerProps) {
   const times = generateTimes();

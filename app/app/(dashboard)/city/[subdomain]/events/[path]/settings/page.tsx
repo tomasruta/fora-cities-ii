@@ -8,6 +8,11 @@ import {
   updateEvent,
 } from "@/lib/actions";
 import DeleteEventForm from "@/components/form/delete-event-form";
+import { DatePicker } from "@/components/form-builder/date-picker";
+import TimePicker from "@/components/ui/time-picker";
+import UpdateEventForm from "@/components/form/update-event-placetime-form";
+import NotFoundPost from "../not-found";
+import UpdateEventPlaceTimeForm from "@/components/form/update-event-placetime-form";
 // import DeletePostForm from "@/components/form/delete-post-form";
 
 export default async function EventSettings({
@@ -20,19 +25,32 @@ export default async function EventSettings({
     redirect("/login");
   }
 
-  console.log("Path: ", params.path);
-  console.log("Subdomain: ", params.subdomain);
-
-  const data = await prisma.event.findFirst({
-    where: {
-      organization: {
-        subdomain: params.subdomain,
+  const [event] = await prisma.$transaction([
+    prisma.event.findFirst({
+      where: {
+        organization: {
+          subdomain: params.subdomain,
+        },
+        path: params.path,
       },
-      path: params.path,
-    },
-  });
+      include: {
+        organization: {
+          include: {
+            places: true,
+          }
+        },
+        eventPlaces: {
+          include: {
+            place: true
+          }
+        }
+      }
+    }),
+  ]);
 
-  console.log("data: ", data);
+  if (!event) {
+    return NotFoundPost()
+  }
 
   return (
     <div className="flex flex-col space-y-6">
@@ -43,7 +61,7 @@ export default async function EventSettings({
         inputAttrs={{
           name: "image",
           type: "file",
-          defaultValue: data?.image!,
+          defaultValue: event?.image!,
         }}
         handleSubmit={updateEvent}
       />
@@ -54,8 +72,8 @@ export default async function EventSettings({
         inputAttrs={{
           name: "name",
           type: "text",
-          defaultValue: data?.name!,
-          placeholder: data?.name || "Your Event",
+          defaultValue: event?.name!,
+          placeholder: event?.name || "Your Event",
           maxLength: 32,
         }}
         handleSubmit={updateEvent}
@@ -67,12 +85,15 @@ export default async function EventSettings({
         inputAttrs={{
           name: "description",
           type: "text",
-          defaultValue: data?.description!,
-          placeholder: data?.description || "Describe your event.",
+          defaultValue: event?.description!,
+          placeholder: event?.description || "Describe your event.",
         }}
         handleSubmit={updateEvent}
       />
-      {data && <DeleteEventForm eventName={data?.name} />}
+
+      <UpdateEventPlaceTimeForm event={event} organization={event?.organization} places={event?.organization.places} />
+
+      {event && <DeleteEventForm eventName={event?.name} />}
     </div>
   );
 }

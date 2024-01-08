@@ -356,10 +356,10 @@ export const createEvent = async (input: {
   placeId?: string;
   parentEvent?: Event;
   oneTimeLocation?: {
-    name: string,
-    address1: string,
-    address2?: string,
-  }
+    name: string;
+    address1: string;
+    address2?: string;
+  };
 }) => {
   const session = await getSession();
   if (!session?.user.id) {
@@ -408,7 +408,6 @@ export const createEvent = async (input: {
       };
     }
   }
-
 
   // If oneTimeLocation is provided, create a Place record
   if (input.oneTimeLocation) {
@@ -523,6 +522,82 @@ export const createEvent = async (input: {
     };
   }
 };
+
+export const updateEventPlaceTime = withEventAuth(
+  async (
+    input: { placeId: string; startingAt: Date; endingAt: Date },
+    event: Event & {
+      organization: Organization;
+      eventPlaces: { place: Place }[];
+    },
+  ) => {
+    const previousPlaceId = event.eventPlaces[0]?.place?.id;
+    const session = await getSession();
+    if (!session?.user.id) {
+      return {
+        error: "Not authenticated",
+      };
+    }
+
+    const nextPlace = await prisma.place.findUnique({
+      where: {
+        id: input.placeId,
+      },
+    });
+
+    if (!nextPlace) {
+      return {
+        error: "This location is not available.",
+      };
+    }
+    try {
+      await prisma.$transaction([
+        prisma.eventPlace.deleteMany({
+          where: {
+            eventId: event.id,
+          },
+        }),
+      ]);
+
+      const placeIsAvailable = await isTimeSlotAvailable(
+        input.placeId,
+        input.startingAt,
+        input.endingAt,
+      );
+
+      if (!placeIsAvailable) {
+        return {
+          error: "This location has an overlapping event at that time.",
+        };
+      }
+
+      const [updatedEvent] = await prisma.$transaction([
+        prisma.event.update({
+          where: {
+            id: event.id,
+          },
+          data: {
+            startingAt: input.startingAt,
+            endingAt: input.endingAt,
+            eventPlaces: {
+              create: [
+                {
+                  placeId: input.placeId,
+                },
+              ],
+            },
+          },
+        }),
+      ]);
+
+      return updatedEvent;
+    } catch (error: any) {
+      return {
+        error: error.message,
+      };
+    }
+  },
+);
 
 export async function isTimeSlotAvailable(
   placeId: string,
