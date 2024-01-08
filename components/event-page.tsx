@@ -51,12 +51,13 @@ type LocationDisplayProps = {
 };
 
 function LocationDisplay({ place }: LocationDisplayProps) {
-  return (
+  const content = (
     <div className="my-0">
       <div className="space-x-2">
         <span className="text-md font-semibold tracking-tight text-gray-900 lg:text-lg dark:text-gray-100">
           {place.name}
         </span>
+        {place.googlePlaceId ? <span>↗</span> : null}
       </div>
       <div className="flex flex-col">
         <div className="lg:text-md text-sm font-medium text-gray-750 dark:text-gray-250">
@@ -70,6 +71,17 @@ function LocationDisplay({ place }: LocationDisplayProps) {
       </div>
     </div>
   );
+  if (place?.googlePlaceId) {
+    const href = `https://www.google.com/maps/search/?api=1&query=${place.address1}&query_place_id=${place.googlePlaceId}`;
+
+    return (
+      <a href={href} target="_blank" rel="nofollow noopener">
+        {content}
+      </a>
+    );
+  }
+
+  return content;
 }
 
 type RolesAndUsers = {

@@ -92,6 +92,7 @@ export default function CreatePlaceModal({
     console.log("selected: ", selected);
     if (selected) {
       form.setValue("address1", selected.formatted_address);
+      form.setValue("googlePlaceId", selected.place_id);
     }
   }
 
