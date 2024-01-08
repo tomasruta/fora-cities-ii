@@ -71,7 +71,6 @@ export default async function EventList({
         : {}),
     },
     include: {
-      //   organization: {},
       organization: {
         select: {
           subdomain: true,

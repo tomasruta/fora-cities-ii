@@ -18,7 +18,7 @@ export async function generateMetadata({
   if (!event) {
     return null;
   }
-  const { name, description } = event;
+  const { name, description, image } = event;
 
   return {
     title: name,
@@ -26,13 +26,16 @@ export async function generateMetadata({
     openGraph: {
       title: name,
       description,
+      images: [image],
+      url: new URL(`https://${domain}/${event.path}`),
     },
-    twitter: {
-      card: "summary_large_image",
-      title: name,
-      description,
-      creator: event.organization.name,
-    },
+    // twitter: {
+    //   card: "summary_large_image",
+    //   title: name,
+    //   description,
+    //   creator: event.organization.name,
+    // },
+    metadataBase: new URL(`https://${domain}/${event.path}`),
   };
 }
 
