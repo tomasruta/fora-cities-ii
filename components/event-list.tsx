@@ -3,9 +3,6 @@ import Image from "next/image";
 import EventListItem from "./event-list-item";
 import { Event } from "@prisma/client";
 import { getSiteData } from "@/lib/fetchers";
-import CreateEventModal from "./modal/create-event";
-import { Button } from "./ui/button";
-import OpenModalButton from "./open-modal-button";
 import { getSubdomainFromDomain } from "@/lib/utils";
 
 export type EventFeedEvent = Event & {

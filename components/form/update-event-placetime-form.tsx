@@ -1,11 +1,11 @@
 "use client";
 
 import { toast } from "sonner";
-import { createEvent } from "@/lib/actions";
+import { updateEventPlaceTime } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { FormEvent, LabelHTMLAttributes, useEffect, useState } from "react";
 import { Event, Organization, Place } from "@prisma/client";
-import FormButton from "./form-button";
+import FormButton from "../modal/form-button";
 import { DatePicker } from "../form-builder/date-picker";
 import TimePicker from "../ui/time-picker";
 import { Input } from "../ui/input";
@@ -19,31 +19,8 @@ import {
 import { revalidatePath } from "next/cache";
 import { Building2Icon, PlusCircle } from "lucide-react";
 import { Button } from "../ui/button";
-import ResponsiveDialog from "../responsive-dialog";
-import CreatePlaceModal from "./create-place-form";
 import { Separator } from "../ui/separator";
-
-export function combineDateAndTime(date: Date, timeInMs: string) {
-  const timeElapsed = parseInt(timeInMs);
-
-  const hours = Math.floor(timeElapsed / (1000 * 60 * 60));
-  const minutes = Math.floor(
-    (timeElapsed - hours * 1000 * 60 * 60) / (1000 * 60),
-  );
-  const seconds = Math.floor(
-    (timeElapsed - hours * 1000 * 60 * 60 - minutes * 1000 * 60) / 1000,
-  );
-  const milliseconds = timeElapsed % 1000;
-
-  const combined = new Date(date);
-  combined.setHours(hours);
-  combined.setMinutes(minutes);
-  combined.setSeconds(seconds);
-  combined.setMilliseconds(milliseconds);
-
-  console.log("combined date and time: ", combined.toISOString());
-  return combined;
-}
+import { combineDateAndTime } from "../modal/create-event";
 
 const FormLabel = (props: LabelHTMLAttributes<HTMLLabelElement>) => {
   return (
@@ -54,40 +31,57 @@ const FormLabel = (props: LabelHTMLAttributes<HTMLLabelElement>) => {
   );
 };
 
-export default function CreateEventModal({
+function getDefaultTime(date?: Date): string {
+  if (!date) {
+    date = new Date();
+  }
+
+  // Get the current time in milliseconds past the current day interval
+  const currentTime = date.getTime();
+  const startOfDay = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  ).getTime();
+  const timePastDayInterval = currentTime - startOfDay;
+
+  return timePastDayInterval.toString();
+}
+
+export default function UpdateEventPlaceTimeForm({
   organization,
   places,
+  event,
   parentEvent,
   redirectBaseUrl,
 }: {
   organization: Organization;
   places: Place[];
+  event: Event & { eventPlaces: { place: Place }[] };
   parentEvent?: Event;
   redirectBaseUrl?: string;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
+  console.log("PlaceId: ", event?.eventPlaces?.[0]?.place?.id);
+
   const [data, setData] = useState<{
-    name: string;
-    description: string;
-    path: string;
     startingAtDate?: Date;
     startingAtTime?: string;
     endingAtDate?: Date;
     endingAtTime?: string;
     placeId?: string;
   }>({
-    name: "",
-    description: "",
-    path: "",
-    startingAtDate: new Date(),
-    startingAtTime: undefined,
-
-    endingAtDate: new Date(),
-    endingAtTime: undefined,
-
-    placeId: undefined,
+    startingAtDate: new Date(
+      event?.startingAt ? event?.startingAt : new Date(),
+    ),
+    startingAtTime: getDefaultTime(
+      event.startingAt ? event.startingAt : undefined,
+    ),
+    endingAtDate: new Date(event?.endingAt ? event?.endingAt : new Date()),
+    endingAtTime: getDefaultTime(event.endingAt ? event.endingAt : undefined),
+    placeId: event?.eventPlaces?.[0]?.place?.id ?? undefined,
   });
 
   const [addPlace, setAddPlace] = useState(false);
@@ -102,52 +96,43 @@ export default function CreateEventModal({
     address2: "",
   });
 
-  useEffect(() => {
-    setData((prev) => ({
-      ...prev,
-      path: prev.name
-        .toLowerCase()
-        .trim()
-        .replace(/[\W_]+/g, "-"),
-    }));
-  }, [data.name]);
-
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     const startingAt =
       data.startingAtDate && data.startingAtTime
         ? combineDateAndTime(data.startingAtDate, data.startingAtTime)
-        : new Date();
+        : event.startingAt;
 
     const endingAt =
       data.endingAtDate && data.endingAtTime
         ? combineDateAndTime(data.endingAtDate, data.endingAtTime)
-        : new Date();
+        : event.endingAt;
 
-    const name = data.name;
-    const description = data.description;
-    const path = data.path;
     const placeId = data.placeId;
 
-    createEvent({
-      name,
-      description,
-      path,
-      organizationId: organization.id,
-      startingAt,
-      endingAt,
-      placeId,
-      parentEvent,
-      oneTimeLocation: addPlace ? placeData : undefined,
-    })
+    updateEventPlaceTime(
+      {
+        startingAt,
+        endingAt,
+        placeId,
+        // oneTimeLocation: addPlace ? placeData : undefined,
+      },
+      {
+        params: {
+          subdomain: organization.subdomain as string,
+          path: event.path,
+        },
+      },
+      null,
+    )
       .then((res: any) => {
         setLoading(false);
         if (res.error) {
           toast.error(res.error);
         } else {
           const { imageBlurhash, createdAt, updatedAt, ...org } = organization;
-          toast.success(`Successfully created Event!`);
+          toast.success(`Successfully updated Event!`);
           revalidatePath(`/`, "page");
           if (parentEvent) {
             revalidatePath(`/${parentEvent.path}`);
@@ -169,60 +154,13 @@ export default function CreateEventModal({
   return (
     <form
       onSubmit={onSubmit}
-      className="mx-auto w-full rounded-md bg-white pt-10 md:max-w-lg md:border md:border-gray-200 md:pt-0 md:shadow dark:bg-gray-900 dark:md:border-gray-700"
+      className="rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
     >
-      <div className="relative flex flex-col space-y-4 p-5 md:p-10">
-        <h2 className="font-cal text-2xl dark:text-white">
-          {parentEvent
-            ? `Create a sub event for ${parentEvent.name}`
-            : "Create a new event"}
+      <div className="relative flex flex-col space-y-4 p-5 sm:p-10">
+        <h2 className="font-cal text-xl dark:text-white">
+          Update Location and Time
         </h2>
-
-        <div className="flex flex-col space-y-2">
-          <FormLabel htmlFor="name">Name</FormLabel>
-          <Input
-            name="name"
-            type="text"
-            placeholder="My Awesome Event"
-            autoFocus
-            value={data.name}
-            onChange={(e) => setData({ ...data, name: e.target.value })}
-            maxLength={64}
-            required
-          />
-        </div>
-
-        <div className="flex flex-col space-y-2">
-          <FormLabel htmlFor="path">Path</FormLabel>
-          <div className="flex w-full max-w-md">
-            <div className="flex items-center rounded-r-lg border border-l-0 border-gray-200 bg-gray-100 px-3 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
-              {organization.subdomain}.{process.env.NEXT_PUBLIC_ROOT_DOMAIN}/
-            </div>
-            <Input
-              name="path"
-              type="text"
-              placeholder="path"
-              value={data.path}
-              onChange={(e) => setData({ ...data, path: e.target.value })}
-              autoCapitalize="off"
-              pattern="[a-zA-Z0-9\-]+" // only allow lowercase letters, numbers, and dashes
-              maxLength={6432}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col space-y-2">
-          <FormLabel htmlFor="description">Description</FormLabel>
-          <textarea
-            name="description"
-            value={data.description}
-            onChange={(e) => setData({ ...data, description: e.target.value })}
-            maxLength={280}
-            rows={3}
-            className="w-full rounded-md border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-900  focus:outline-none focus:ring-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:placeholder-gray-700 dark:focus:ring-white"
-          />
-        </div>
+        <p className="text-sm text-gray-700 dark:text-gray-400">{""}</p>
 
         <div className="flex flex-col space-y-2">
           <FormLabel>Location</FormLabel>
@@ -251,10 +189,12 @@ export default function CreateEventModal({
               >
                 <div className="flex items-center">
                   <PlusCircle className="h-4 w-4 stroke-gray-800 dark:stroke-gray-300" />
-                  <span className="mx-2.5">{`Use Private Venue`}</span>
+                  <span className="mx-2.5">{`Add Private Venue`}</span>
                 </div>
               </Button>
               <Select
+                defaultValue={data.placeId}
+                value={data.placeId}
                 onValueChange={(value) => {
                   setData((prev) => ({ ...prev, placeId: value }));
                 }}
@@ -264,6 +204,7 @@ export default function CreateEventModal({
                 </SelectTrigger>
                 <SelectContent>
                   {places.map((place) => {
+                    console.log("place.id: ", place.id);
                     return (
                       <SelectItem key={place.id} value={place.id}>
                         {place.name}
@@ -363,7 +304,7 @@ export default function CreateEventModal({
       <div className="flex w-full items-center justify-end rounded-b-lg border-t border-gray-200 bg-gray-50 px-4 py-3 md:w-auto md:px-10 dark:border-gray-700 dark:bg-gray-800">
         <FormButton
           loading={loading}
-          text={"Create Event"}
+          text={"SAVE"}
           className="w-full md:w-auto"
         />
       </div>
