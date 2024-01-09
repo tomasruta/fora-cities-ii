@@ -6,33 +6,39 @@ import {
   getEventTicketTiers,
 } from "@/lib/actions";
 import { getSession } from "@/lib/auth";
+import { Metadata } from "next";
 
 export async function generateMetadata({
   params,
 }: {
   params: { domain: string; path: string };
-}) {
+}): Promise<Metadata | null> {
   const { path } = params;
   const domain = params.domain.replace("%3A", ":");
   const event = await getEventData(path, domain);
   if (!event) {
     return null;
   }
-  const { name, description } = event;
-
+  const { name, description, image } = event as {
+    name: string;
+    description: string;
+    image: string;
+  };
   return {
     title: name,
     description,
     openGraph: {
       title: name,
       description,
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title: name,
       description,
-      creator: event.organization.name,
+      images: [image],
     },
+    metadataBase: new URL(`https://${domain}/${event.path}`),
   };
 }
 
