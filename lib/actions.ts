@@ -2200,7 +2200,7 @@ export const createEmailSubscriber = async ({
 }: {
   email: string;
   name: string;
-  description: string;
+  description?: string;
   indicatedInterest: EmailSubscriberInterest;
 }) => {
   const fullName = name.trim();

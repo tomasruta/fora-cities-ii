@@ -30,6 +30,19 @@ export default async function middleware(
   const path = url.pathname;
   const searchParams = url.searchParams;
 
+  // handle www request redirects
+  if (
+    hostname == `www.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}` ||
+    hostname === `www.${process.env.VERCEL_URL}`
+  ) {
+    const rootDomain =
+      process.env.NEXT_PUBLIC_ROOT_DOMAIN || process.env.VERCEL_URL;
+    const newUrl = new URL(
+      `https://${rootDomain}${path}${searchParams ? `?${searchParams}` : ""}`,
+    );
+    return NextResponse.redirect(newUrl, 301);
+  }
+
   produceKafkaEvent(req, event);
 
   // rewrites for app pages

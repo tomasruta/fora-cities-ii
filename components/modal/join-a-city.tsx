@@ -30,7 +30,6 @@ export default function JoinACityModal() {
   });
   const [loading, setLoading] = useState(false);
 
-  // const router = useRouter();
   const modal = useModal();
 
   async function onSubmit(data: z.infer<typeof JoinACitySchema>) {
